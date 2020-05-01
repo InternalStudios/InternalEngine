@@ -1,0 +1,2 @@
+/usr/bin/ar qc bin/Debug-linux-x86_64/Glad/liblibGlad.a  CMakeFiles/Glad.dir/src/glad.c.o CMakeFiles/Glad.dir/src/glad_glx.c.o
+/usr/bin/ranlib bin/Debug-linux-x86_64/Glad/liblibGlad.a

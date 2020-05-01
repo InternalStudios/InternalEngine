@@ -1,0 +1,14 @@
+.vscode/
+bin/
+.build-debug/
+bin-int/
+compile_commands.json
+*.workspace
+Makefile
+*.mk
+*.project
+
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.cbp
