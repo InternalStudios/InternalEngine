@@ -6,7 +6,10 @@
 
 #pragma once
 
-int main()
-{
+#include "Internal/Core/Window.h"
+#include "Internal/Linux/LinuxWindow.h"
 
+int main(int argc, char* argv[])
+{
+    
 }

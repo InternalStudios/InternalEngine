@@ -7,6 +7,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Module.h"
 
 namespace Internal
 {
@@ -18,7 +19,7 @@ namespace Internal
     };
 
     // Base Window Class
-    class Window
+    class Window : public Module
     {
     protected:
         Window(WindowData& data);
@@ -34,7 +35,7 @@ namespace Internal
         bool getFocused() {return m_Data.IsFocused;}
 
         virtual void OnUpdate() = 0;
-    private:
+    protected:
         WindowData m_Data;
     };
 }
