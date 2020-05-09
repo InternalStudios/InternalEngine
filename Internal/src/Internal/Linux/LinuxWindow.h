@@ -1,0 +1,25 @@
+/*
+    Author: Shaun Fulham
+    Copyright: Internal Media Group
+    Licence: IMG Public Licence
+*/
+
+#pragma once
+
+#include "Internal/Core/Window.h"
+
+namespace Internal
+{
+    class LinuxWindow : public Window
+    {
+    public:
+        LinuxWindow(WindowData data);
+        virtual void setTitle(const char* title) override;
+        virtual void setWidth(uint32_t width) override;
+        virtual void setHeight(uint32_t height) override;
+
+        virtual void OnUpdate() override;
+    private:
+
+    };
+}
