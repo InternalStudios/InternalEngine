@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 namespace Internal
 {
     struct WindowData
@@ -18,8 +20,9 @@ namespace Internal
     // Base Window Class
     class Window
     {
+    protected:
+        Window(WindowData& data);
     public:
-        Window(WindowData& data = {"InternalEngine", 1280, 720, true});
         virtual void setTitle(const char* title) = 0;
         const char* getTitle() const {return m_Data.Title;}
 
