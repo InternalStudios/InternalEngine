@@ -7,15 +7,14 @@ namespace Internal
 		: Window(data)
 	{
 		HINSTANCE hinstance = GetModuleHandle(0);
-		const wchar_t* CLASS_NAME = (const wchar_t*)data.Title;
-		WNDCLASS wc = {};
+		WNDCLASSA wc = {};
 		wc.lpfnWndProc = WindowProc;
 		wc.hInstance = hinstance;
-		wc.lpszClassName = CLASS_NAME;
+		wc.lpszClassName = data.Title;
 
-		RegisterClass(&wc);
+		RegisterClassA(&wc);
 
-		HWND hwnd = CreateWindowEx(0, CLASS_NAME, (LPCWSTR)*data.Title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
+		HWND hwnd = CreateWindowExA(0, (LPCSTR)*data.Title, (LPCSTR)*data.Title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
 		if (hwnd == NULL)
 		{
 			return;
