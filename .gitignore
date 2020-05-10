@@ -12,3 +12,4 @@ Makefile
 *.vcxproj
 *.vcxproj.filters
 *.cbp
+.vs/
