@@ -14,7 +14,7 @@ namespace Internal
 
 		RegisterClassA(&wc);
 
-		HWND hwnd = CreateWindowExA(0, (LPCSTR)*data.Title, (LPCSTR)*data.Title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
+		HWND hwnd = CreateWindowExA(0, data.Title, data.Title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
 		if (hwnd == NULL)
 		{
 			return;
@@ -55,8 +55,6 @@ namespace Internal
 		{
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwnd, &ps);
-
-
 
 			FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
 
