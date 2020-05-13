@@ -15,6 +15,5 @@ namespace Internal
         void Run();
         void OnEvent();
     private:
-        bool m_Open = true;
     };
 }

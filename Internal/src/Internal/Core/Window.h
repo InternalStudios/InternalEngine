@@ -32,10 +32,13 @@ namespace Internal
         uint32_t getWidth() {return m_Data.width;}
         uint32_t getHeight() {return m_Data.height;}
 
-        bool getFocused() {return m_Data.IsFocused;}
+        bool getFocused() { return m_Data.IsFocused; }
+
+        static bool ShouldClose() { return s_ShouldClose; }
 
         virtual void OnUpdate() = 0;
     protected:
         WindowData m_Data;
+        inline static bool s_ShouldClose = false;
     };
 }

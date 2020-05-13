@@ -27,6 +27,13 @@ project "Glad"
 	        "src/glad_glx.c"
 	    }
 
+	filter "system:windows"
+		files
+		{
+			"include/glad/glad_wgl.h",
+			"src/glad_wgl.c"
+		}
+
 	filter "configurations:Debug"
         runtime "Debug"
         symbols "on"

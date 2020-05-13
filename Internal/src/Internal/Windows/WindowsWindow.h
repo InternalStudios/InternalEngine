@@ -16,13 +16,15 @@ namespace Internal
     {
     public:
         WindowsWindow(WindowData& data);
+        ~WindowsWindow();
         virtual void setTitle(const char* title) override;
         virtual void setWidth(uint32_t width) override;
         virtual void setHeight(uint32_t height) override;
         virtual void OnUpdate() override;
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-        // Inherited via Window
         virtual void OnEvent() override;
+    private:
+        HGLRC m_Context;
     };
 }

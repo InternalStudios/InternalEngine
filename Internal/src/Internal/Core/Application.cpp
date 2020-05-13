@@ -15,10 +15,7 @@ namespace Internal
 
     void Application::Run()
     {
-        while(m_Open)
-        {
 
-        }
     }
 
     void Application::OnEvent()

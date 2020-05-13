@@ -1,4 +1,4 @@
-/*
+﻿/*
     Author: Shaun Fulham
     Copyright: Internal Media Group
     Licence: IMG Public Licence
@@ -8,6 +8,7 @@
 
 #include "Internal/Core/Window.h"
 #include "Internal/Windows/WindowsWindow.h"
+#include "Internal/Core/Application.h"
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +18,7 @@ int main(int argc, char* argv[])
     data.height = 720;
     data.IsFocused = true;
     Internal::WindowsWindow window(data);
-    while (true)
+    while (!Internal::Window::ShouldClose())
     {
         window.OnUpdate();
     }
