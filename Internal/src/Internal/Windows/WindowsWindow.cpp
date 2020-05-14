@@ -31,9 +31,13 @@ namespace Internal
 			return;
 		}
 
+		HDC deviceContext = GetDC(hwnd);
+
+		if (!deviceContext)
+			std::cout << "No DC";
+
 		ShowWindow(hwnd, SW_SHOW);
 
-		HDC deviceContext = GetDC(hwnd);
 		if (!gladLoadWGL(deviceContext))
 			std::cout << "Failed to load WGL";
 

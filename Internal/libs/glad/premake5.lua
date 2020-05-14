@@ -33,6 +33,12 @@ project "Glad"
 			"include/glad/glad_wgl.h",
 			"src/glad_wgl.c"
 		}
+		
+		links
+		{
+			"gdi32",
+			"opengl32"
+		}
 
 	filter "configurations:Debug"
         runtime "Debug"

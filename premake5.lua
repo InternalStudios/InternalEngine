@@ -73,6 +73,12 @@ project "InternalEngine"
 		    "Internal/src/Internal/Windows/**.cpp",
             "Internal/src/Internal/Windows/**.h"
 		}
+		
+		links
+		{
+			"gdi32",
+			"opengl32"
+		}
 
 	filter "system:macosx"
 		cppdialect "C++17"
@@ -153,6 +159,13 @@ project "Sandbox"
 		defines
 		{
 		}
+		
+		links
+		{
+			"gdi32",
+			"opengl32"
+		}
+
 
 
 	filter "system:macosx"
