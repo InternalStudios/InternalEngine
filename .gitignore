@@ -13,3 +13,5 @@ Makefile
 *.vcxproj.filters
 *.cbp
 .vs/
+.vscode/
+*.vcxproj.user
