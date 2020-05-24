@@ -38,7 +38,7 @@ namespace Internal
 
 		ShowWindow(hwnd, SW_SHOW);
 
-		if (!gladLoadWGL(deviceContext))
+		if (gladLoadWGL(deviceContext) == GL_FALSE)
 			std::cout << "Failed to load WGL";
 
 		PIXELFORMATDESCRIPTOR pfd = {
