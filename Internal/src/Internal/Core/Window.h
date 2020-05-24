@@ -37,6 +37,8 @@ namespace Internal
         static bool ShouldClose() { return s_ShouldClose; }
 
         virtual void OnUpdate() = 0;
+
+        static Window* CreateWindow(WindowData& data);
     protected:
         WindowData m_Data;
         inline static bool s_ShouldClose = false;
