@@ -36,10 +36,12 @@ namespace Internal
 		if (!deviceContext)
 			std::cout << "No DC";
 
-		ShowWindow(hwnd, SW_SHOW);
+		HGLRC temp_cont = wglCreateContext(deviceContext);
+		wglMakeCurrent(deviceContext, temp_cont);
 
 		if (!gladLoadWGL(deviceContext))
 			std::cout << "Failed to load WGL";
+
 
 		PIXELFORMATDESCRIPTOR pfd = {
 			sizeof(PIXELFORMATDESCRIPTOR),
@@ -65,10 +67,21 @@ namespace Internal
 
 		SetPixelFormat(deviceContext, format, &pfd);
 
-		m_Context = wglCreateContext(deviceContext);
+		int attributes[] = {
+			WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+			WGL_CONTEXT_MINOR_VERSION_ARB, 2,
+			WGL_CONTEXT_FLAGS_ARB,
+			WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+			0
+		};
 
+		m_Context = wglCreateContextAttribsARB(deviceContext, NULL, attributes, )
+
+		wglMakeCurrent(NULL, NULL);
+		wglDeleteContext(temp_cont);
 		wglMakeCurrent(deviceContext, m_Context);
 		gladLoadGL();
+		ShowWindow(hwnd, SW_SHOW);
 		glEnable(GL_DEPTH);
 	}
 
