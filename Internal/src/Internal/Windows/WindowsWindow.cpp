@@ -25,21 +25,23 @@ namespace Internal
 
 		RegisterClass(&wc);
 
-		HWND hwnd = CreateWindowExW(0, title, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
+		m_HWND = CreateWindowExW(0, title, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
 		if (hwnd == NULL)
 		{
 			return;
 		}
 
-		HDC deviceContext = GetDC(hwnd);
+		m_HDC = GetDC(hwnd);
 
-		if (!deviceContext)
+		if (!m_HDC)
 			std::cout << "No DC";
 
-		ShowWindow(hwnd, SW_SHOW);
+		HGLRC temp_cont = wglCreateContext(m_HDC);
+		wglMakeCurrent(m_HDC, temp_cont);
 
-		if (gladLoadWGL(deviceContext) == GL_FALSE)
+		if (!gladLoadWGL(m_HDC))
 			std::cout << "Failed to load WGL";
+
 
 		PIXELFORMATDESCRIPTOR pfd = {
 			sizeof(PIXELFORMATDESCRIPTOR),
@@ -60,21 +62,34 @@ namespace Internal
 			0, 0, 0
 		};
 
-		unsigned int format = ChoosePixelFormat(deviceContext, &pfd);
+		unsigned int format = ChoosePixelFormat(m_HDC, &pfd);
 
 
-		SetPixelFormat(deviceContext, format, &pfd);
+		SetPixelFormat(m_HDC, format, &pfd);
 
-		m_Context = wglCreateContext(deviceContext);
+		int attributes[] = {
+			WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+			WGL_CONTEXT_MINOR_VERSION_ARB, 2,
+			WGL_CONTEXT_FLAGS_ARB,
+			WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+			0
+		};
 
-		wglMakeCurrent(deviceContext, m_Context);
+		m_Context = wglCreateContextAttribsARB(m_HDC, NULL, attributes, )
+
+		wglMakeCurrent(NULL, NULL);
+		wglDeleteContext(temp_cont);
+		wglMakeCurrent(m_HDC, m_Context);
 		gladLoadGL();
+		ShowWindow(hwnd, SW_SHOW);
 		glEnable(GL_DEPTH);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
 		wglDeleteContext(m_Context);
+		ReleaseDC(m_HWND, m_HDC);
+		DestroyWindow(m_HWND);
 	}
 
 	void WindowsWindow::setTitle(const char* title)
@@ -95,6 +110,7 @@ namespace Internal
 		GetMessage(&msg, NULL, 0, 0);
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+		SwapBuffers(m_HDC);
 	}
 
 	LRESULT CALLBACK WindowsWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
