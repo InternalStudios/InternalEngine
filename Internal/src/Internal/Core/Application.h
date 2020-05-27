@@ -6,6 +6,10 @@
 
 #pragma once
 
+#include "Window.h"
+
+#include "Internal/Types/Pointer.h"
+
 namespace Internal
 {
     class Application
@@ -15,5 +19,7 @@ namespace Internal
         void Run();
         void OnEvent();
     private:
+        static Application* s_Instance;
+        Pointer<Window> m_Window;
     };
 }

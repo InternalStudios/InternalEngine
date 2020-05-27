@@ -26,22 +26,15 @@ namespace Internal
 		RegisterClass(&wc);
 
 		m_HWND = CreateWindowExW(0, title, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
-		if (hwnd == NULL)
+		if (m_HWND == NULL)
 		{
 			return;
 		}
 
-		m_HDC = GetDC(hwnd);
+		m_HDC = GetDC(m_HWND);
 
 		if (!m_HDC)
 			std::cout << "No DC";
-
-		HGLRC temp_cont = wglCreateContext(m_HDC);
-		wglMakeCurrent(m_HDC, temp_cont);
-
-		if (!gladLoadWGL(m_HDC))
-			std::cout << "Failed to load WGL";
-
 
 		PIXELFORMATDESCRIPTOR pfd = {
 			sizeof(PIXELFORMATDESCRIPTOR),
@@ -66,6 +59,13 @@ namespace Internal
 
 
 		SetPixelFormat(m_HDC, format, &pfd);
+		HGLRC temp_cont = wglCreateContext(m_HDC);
+		wglMakeCurrent(m_HDC, temp_cont);
+
+		if (!gladLoadWGL(m_HDC))
+			std::cout << "Failed to load WGL";
+
+
 
 		int attributes[] = {
 			WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
@@ -75,13 +75,13 @@ namespace Internal
 			0
 		};
 
-		m_Context = wglCreateContextAttribsARB(m_HDC, NULL, attributes, )
+		m_Context = wglCreateContextAttribsARB(m_HDC, NULL, attributes);
 
 		wglMakeCurrent(NULL, NULL);
 		wglDeleteContext(temp_cont);
 		wglMakeCurrent(m_HDC, m_Context);
 		gladLoadGL();
-		ShowWindow(hwnd, SW_SHOW);
+		ShowWindow(m_HWND, SW_SHOW);
 		glEnable(GL_DEPTH);
 	}
 
