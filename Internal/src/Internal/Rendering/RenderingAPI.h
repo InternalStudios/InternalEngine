@@ -9,7 +9,7 @@ namespace Internal
 	class RenderingAPI
 	{
 	public:
-		virtual ClearColor()
+		virtual void ClearColor() = 0;
 		virtual void OnUpdate() = 0;
 	private:
 

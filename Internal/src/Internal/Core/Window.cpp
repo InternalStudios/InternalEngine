@@ -13,4 +13,9 @@ namespace Internal
 	{
 		
 	}
+
+	Window* Window::CreateWindow(WindowData& data)
+	{
+
+	}
 }

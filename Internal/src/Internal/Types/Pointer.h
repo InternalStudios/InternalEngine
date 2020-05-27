@@ -11,12 +11,18 @@ namespace Internal
 	template<typename T>
 	class Pointer
 	{
-
+	public:
+		Pointer(T* pointer);
+		Pointer(const Pointer<T>& pointer);
+		~Pointer();
+	private:
+		int* m_RefCount;
+		T* m_Pointer;
 	};
 
-	template<typename T, typename Args ...>
-	Pointer<T> CreatePointer()
+	template<typename T, typename... Args>
+	Pointer<T> CreatePointer(Args... args)
 	{
-
+		
 	}
 }
