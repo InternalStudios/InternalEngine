@@ -7,9 +7,9 @@
 #pragma once
 
 #include "Internal/Core/Window.h"
-//#include "Internal/Windows/WindowsWindow.h"
+#include "Internal/Windows/WindowsWindow.h"
 #include "Internal/Core/Application.h"
-
+#include "Internal/Memory/Allocators.h"
 #include "glad/glad.h"
 
 int main(int argc, char* argv[])
@@ -19,11 +19,16 @@ int main(int argc, char* argv[])
     data.width = 1280;
     data.height = 720;
     data.IsFocused = true;
-/*    Internal::WindowsWindow window(data);
-    while (!Internal::Window::ShouldClose())
+    Internal::Allocator::Init();
+    Internal::WindowsWindow* window = Internal::Allocator::Allocate<Internal::WindowsWindow>(sizeof(::Internal::WindowsWindow));
+    new (window) Internal::WindowsWindow(data);
+    while (!::Internal::Window::ShouldClose())
     {
         window.OnUpdate();
         glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    }*/
+    }
+    window->~WindowsWindow();
+    free(window);
+
 }

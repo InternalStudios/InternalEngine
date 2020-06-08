@@ -8,7 +8,7 @@
 
 namespace Internal
 {
-	template<typename T>
+	/*template<typename T>
 	Pointer::Pointer(T* pointer)
 	{
 		if(!m_RefCount)
@@ -27,7 +27,13 @@ namespace Internal
 	Pointer::Pointer(const Pointer<T>& pointer)
 	{
 		m_RefCount = pointer.RefCount;
-		//Pointer(pointer.m_Pointer);
+		Pointer(pointer.m_Pointer);
+	}
+
+	template<typename T>
+	T* Pointer<T>::operator->()
+	{
+		return m_Pointer;
 	}
 
 	template<typename T>
@@ -41,5 +47,5 @@ namespace Internal
 			(*m_RefCount)--;
 		}
 		
-	}
+	}*/
 }

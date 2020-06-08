@@ -11,7 +11,7 @@
 
 namespace Internal
 {
-	WindowsWindow::WindowsWindow(WindowData& data)
+	WindowsWindow::WindowsWindow(const WindowData& data)
 		: Window(data)
 	{
 		int wstr_size = MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, data.Title, -1, nullptr, 0);

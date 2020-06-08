@@ -15,7 +15,7 @@ namespace Internal
     class WindowsWindow : public Window
     {
     public:
-        WindowsWindow(WindowData& data);
+        WindowsWindow(const WindowData& data);
         ~WindowsWindow();
         virtual void setTitle(const char* title) override;
         virtual void setWidth(uint32_t width) override;

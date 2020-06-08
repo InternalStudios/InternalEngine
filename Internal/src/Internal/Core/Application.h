@@ -15,11 +15,11 @@ namespace Internal
     class Application
     {
     public:
-        Application();
+        Application(WindowData& data);
         void Run();
         void OnEvent();
     private:
         static Application* s_Instance;
-        Pointer<Window> m_Window;
+        //Pointer<Window> m_Window;
     };
 }

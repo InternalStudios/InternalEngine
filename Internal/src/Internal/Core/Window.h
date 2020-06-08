@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "Module.h"
+#include "Internal/Types/Pointer.h"
 
 namespace Internal
 {
@@ -22,7 +23,7 @@ namespace Internal
     class Window : public Module
     {
     protected:
-        Window(WindowData& data);
+        Window(const WindowData& data);
     public:
         virtual void setTitle(const char* title) = 0;
         const char* getTitle() const {return m_Data.Title;}
@@ -38,7 +39,7 @@ namespace Internal
 
         virtual void OnUpdate() = 0;
 
-        static Window* CreateWindow(WindowData& data);
+        //static Window* CreateWindow(WindowData& data);
     protected:
         WindowData m_Data;
         inline static bool s_ShouldClose = false;

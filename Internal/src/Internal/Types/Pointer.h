@@ -14,6 +14,7 @@ namespace Internal
 	public:
 		Pointer(T* pointer);
 		Pointer(const Pointer<T>& pointer);
+		T* operator->();
 		~Pointer();
 	private:
 		int* m_RefCount;
@@ -23,6 +24,6 @@ namespace Internal
 	template<typename T, typename... Args>
 	Pointer<T> CreatePointer(Args... args)
 	{
-		
+
 	}
 }
