@@ -4,3 +4,8 @@
     Licence: IMG Public Licence
 */
 #include "Layer.h"
+
+namespace Internal
+{
+
+}

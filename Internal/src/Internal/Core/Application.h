@@ -8,10 +8,18 @@
 
 #include "Window.h"
 
-#include "Internal/Types/Pointer.h"
-
 namespace Internal
 {
+
+    struct ApplicationData
+    {
+        WindowData& WindowData;
+        const char* AppName;
+        int AppVersionMajor;
+        int AppVersionMinor;
+        int AppVersionPatch;
+    };
+
     class Application
     {
     public:
@@ -20,6 +28,6 @@ namespace Internal
         void OnEvent();
     private:
         static Application* s_Instance;
-        //Pointer<Window> m_Window;
+        Window* m_Window;
     };
 }

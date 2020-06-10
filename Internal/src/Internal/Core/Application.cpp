@@ -12,17 +12,18 @@ namespace Internal
 {
     Application* Application::s_Instance = nullptr;
 
-    Application::Application(WindowData& data)
+    Application::Application(ApplicationData& data)
     {
         s_Instance = this;
+        m_Window = Window::CreateWindow(data.WindowData);
     }
 
     void Application::Run()
     {
-        /*while (!m_Window->ShouldClose())
+        while (!Window::ShouldClose())
         {
             m_Window->OnUpdate();
-        }*/
+        }
     }
 
     void Application::OnEvent()

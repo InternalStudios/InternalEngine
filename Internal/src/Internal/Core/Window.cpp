@@ -20,12 +20,12 @@ namespace Internal
 		
 	}
 
-	/*Pointer<Window> Window::CreateWindow(WindowData& data)
+	Window* Window::CreateWindow(WindowData& data)
 	{
 		#ifdef INTERNAL_WINDOWS
-		return;
+		return new WindowsWindow(data);
 		#elif defined(INTERNAL_LINUX)
-		return;
+		return new LinuxWindow(data)
 		#endif
-	}*/
+	}
 }
