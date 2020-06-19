@@ -76,7 +76,6 @@ project "InternalEngine"
 		
 		links
 		{
-			"gdi32",
 			"opengl32"
 		}
 

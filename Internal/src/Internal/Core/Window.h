@@ -40,6 +40,7 @@ namespace Internal
         static bool ShouldClose() { return s_ShouldClose; }
 
         virtual void OnUpdate() = 0;
+        virtual void OnTick() = 0;
 
         static Window* CreateWindow(const WindowData& data);
     protected:

@@ -8,7 +8,7 @@
 
 namespace Internal
 {
-    LinuxWindow::LinuxWindow(WindowData& data)
+    LinuxWindow::LinuxWindow(const WindowData& data)
         : Window(data)
     {
         m_Display = XOpenDisplay(NULL);

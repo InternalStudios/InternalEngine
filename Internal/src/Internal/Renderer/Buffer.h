@@ -1,5 +1,12 @@
+/*
+    Author: Shaun Fulham
+    Copyright: Internal Media Group
+    Licence: IMG Public Licence
+*/
+
 #pragma once
 
+#include <inttypes.h>
 #include <vector>
 
 namespace Internal
@@ -17,23 +24,24 @@ namespace Internal
 		case ShaderDataType::Float: return	4;
 		case ShaderDataType::Float2: return 4 * 2;
 		case ShaderDataType::Float3: return 4 * 3;
--		case ShaderDataType::Float4: return 4 * 4;
+		case ShaderDataType::Float4: return 4 * 4;
 		case ShaderDataType::Mat3: return	4 * 3 * 3;
-		case ShaderDataType::Mat4: return	4 * 4 * 4;		case ShaderDataType::Int: return	4;
+		case ShaderDataType::Mat4: return	4 * 4 * 4;		
+		case ShaderDataType::Int: return	4;
 		case ShaderDataType::Int2: return	4 * 2;
 		case ShaderDataType::Int3: return	4 * 3;
 		case ShaderDataType::Int4: return	4 * 4;
 		case ShaderDataType::Bool: return	1;
 		}
 
-		ODVM_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		//ODVM_CORE_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 
 	}
 
 	struct BufferElement
 	{
-		std::string Name;
+		const char* Name;
 		ShaderDataType Type;
 		uint32_t Size;
 		size_t Offset;
@@ -41,7 +49,7 @@ namespace Internal
 
 		BufferElement() {}
 
-		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
+		BufferElement(ShaderDataType type, const char* name, bool normalized = false)
 			: Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalized)
 		{
 
@@ -65,7 +73,7 @@ namespace Internal
 			case ShaderDataType::Bool:		return	1;
 			}
 
-			ODVM_CORE_ASSERT(false, "Unknown ShaderDataType!");
+			//ODVM_CORE_ASSERT(false, "Unknown ShaderDataType!");
 			return 0;
 		}
 	};
@@ -119,6 +127,8 @@ namespace Internal
 	class IndexBuffer
 	{
 	public:
+	virtual void Bind();
+	virtual void Unbind();
 	private:
 
 	};

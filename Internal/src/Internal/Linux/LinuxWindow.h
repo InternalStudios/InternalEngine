@@ -18,12 +18,14 @@ namespace Internal
     class LinuxWindow : public Window
     {
     public:
-        LinuxWindow(WindowData& data);
+        LinuxWindow(const WindowData& data);
         virtual void setTitle(const char* title) override {};
         virtual void setWidth(uint32_t width) override {};
         virtual void setHeight(uint32_t height) override {};
 
         virtual void OnUpdate() override;
+        virtual void OnEvent() override {};
+        virtual void OnTick() override {};
     private:
         Display* m_Display;
         ::Window m_Root;

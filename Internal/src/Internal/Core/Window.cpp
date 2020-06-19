@@ -26,7 +26,7 @@ namespace Internal
 		#ifdef INTERNAL_WINDOWS
 		return new WindowsWindow(data);
 		#elif defined(INTERNAL_LINUX)
-		return new LinuxWindow(data)
+		return new LinuxWindow(data);
 		#endif
 	}
 }

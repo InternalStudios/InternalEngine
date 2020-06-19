@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include "Internal/Core/Window.h"
-#include "Internal/Windows/WindowsWindow.h"
+#include "Internal/Linux/LinuxWindow.h"
 #include "Internal/Core/Application.h"
 #include "glad/glad.h"
 
@@ -19,10 +19,10 @@ int main(int argc, char* argv[])
     data.Title = "InternalWindow";
     data.width = 1280;
     data.height = 720;
-    Internal::WindowsWindow window(data);
+    Internal::LinuxWindow* window = (Internal::LinuxWindow*)Internal::Window::CreateWindow(data);
     while (true)
     {
-        window.OnUpdate();
+        window->OnUpdate();
         glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
