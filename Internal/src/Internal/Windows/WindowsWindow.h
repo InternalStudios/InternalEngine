@@ -24,9 +24,11 @@ namespace Internal
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
         virtual void OnEvent() override;
+        virtual void OnTick() override;
     private:
         HGLRC m_Context;
         HWND m_HWND;
         HDC m_HDC;
+
     };
 }

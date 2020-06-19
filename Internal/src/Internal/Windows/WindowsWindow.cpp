@@ -25,7 +25,7 @@ namespace Internal
 
 		RegisterClass(&wc);
 
-		m_HWND = CreateWindowExW(0, title, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
+		m_HWND = ::CreateWindowExW(0, title, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hinstance, NULL);
 		if (m_HWND == NULL)
 		{
 			return;
@@ -137,6 +137,9 @@ namespace Internal
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 	void WindowsWindow::OnEvent()
+	{
+	}
+	void WindowsWindow::OnTick()
 	{
 	}
 }

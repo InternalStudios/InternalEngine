@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include "Module.h"
 
+#define CreateWindow CreateWindow
+
+
 namespace Internal
 {
     struct WindowData
@@ -38,7 +41,7 @@ namespace Internal
 
         virtual void OnUpdate() = 0;
 
-        static Window* CreateWindow(WindowData& data);
+        static Window* CreateWindow(const WindowData& data);
     protected:
         WindowData m_Data;
         inline static bool s_ShouldClose = false;

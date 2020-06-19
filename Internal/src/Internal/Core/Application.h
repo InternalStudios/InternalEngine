@@ -23,7 +23,7 @@ namespace Internal
     class Application
     {
     public:
-        Application(WindowData& data);
+        Application(ApplicationData& data);
         void Run();
         void OnEvent();
     private:

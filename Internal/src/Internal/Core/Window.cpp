@@ -4,13 +4,14 @@
     Licence: IMG Public Licence
 */
 
-#include "Window.h"
 #include "Core.h"
 #ifdef INTERNAL_WINDOWS
 #include "Internal/Windows/WindowsWindow.h"
 #elif defined(INTERNAL_LINUX)
 #include "Internal/Linux/LinuxWindow.h"
 #endif
+#include "Window.h"
+
 
 namespace Internal
 {
@@ -20,7 +21,7 @@ namespace Internal
 		
 	}
 
-	Window* Window::CreateWindow(WindowData& data)
+	Window* ::Internal::Window::CreateWindow(const WindowData& data)
 	{
 		#ifdef INTERNAL_WINDOWS
 		return new WindowsWindow(data);
