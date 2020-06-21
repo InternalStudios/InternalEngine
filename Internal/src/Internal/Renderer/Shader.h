@@ -11,5 +11,5 @@ namespace Internal
 	class Shader
 	{
 		
-	}
+	};
 }

@@ -15,16 +15,6 @@
 
 int main(int argc, char* argv[])
 {
-    Internal::WindowData data = {};
-    data.Title = "InternalWindow";
-    data.width = 1280;
-    data.height = 720;
-    Internal::LinuxWindow* window = (Internal::LinuxWindow*)Internal::Window::CreateWindow(data);
-    while (true)
-    {
-        window->OnUpdate();
-        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
+    Internal::Application* application = Internal::Application::CreateApplication();
+    application->Run();
 }

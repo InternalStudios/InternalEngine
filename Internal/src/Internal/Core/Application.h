@@ -23,10 +23,11 @@ namespace Internal
     class Application
     {
     public:
-        Application(const ApplicationData& data);
         void Run();
         void OnEvent();
         static Application* CreateApplication();
+    protected:
+        Application(const ApplicationData& data);
     private:
         static Application* s_Instance;
         Window* m_Window;
