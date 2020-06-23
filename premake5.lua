@@ -42,7 +42,9 @@ project "InternalEngine"
 		"Internal/src/Internal/Events/**.cpp",
 		"Internal/src/Internal/OpenGL/**.cpp",
 		"Internal/src/Internal/Renderer/**.cpp",
-		"Internal/src/Internal/Types/**.cpp"
+		"Internal/src/Internal/Types/**.cpp",
+		"Internal/src/Internal/Vulkan/**.cpp",
+		"Internal/src/Internal/Vulkan/**.h"
 	}
 
 	includedirs
@@ -103,6 +105,21 @@ project "InternalEngine"
 		{
 		    "Internal/src/Internal/Linux/**.cpp",
 		    "Internal/src/Internal/Linux/**.h"
+		}
+
+		includedirs
+		{
+			"Internal/libs/vulkan/Linux/x86_64/include"
+		}
+
+		libdirs
+		{
+			"Internal/libs/vulkan/Linux/x86_64/lib"
+		}
+
+		links
+		{
+			"vulkan"
 		}
 
     filter "configurations:Debug"
@@ -179,7 +196,7 @@ project "Sandbox"
 		{
 		}
 
-		filter "system:linux"	
+	filter "system:linux"	
 		systemversion "latest"
 		defines
 		{
@@ -191,6 +208,22 @@ project "Sandbox"
             "GL",
 			"GLU",
 			"dl"
+		}
+
+
+		includedirs
+		{
+			"Internal/libs/vulkan/Linux/x86_64/include"
+		}
+
+		libdirs
+		{
+			"Internal/libs/vulkan/Linux/x86_64/lib"
+		}
+
+		links
+		{
+			"vulkan"
 		}
 
     filter "configurations:Debug"

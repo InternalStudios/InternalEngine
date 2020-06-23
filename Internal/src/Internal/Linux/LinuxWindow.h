@@ -13,12 +13,15 @@
 #include "glad/glad.h"
 #include "glad/glad_glx.h"
 
+#include "Internal/Vulkan/VulkanContext.h"
+
 namespace Internal
 {
     class LinuxWindow : public Window
     {
     public:
         LinuxWindow(const WindowData& data);
+        ~LinuxWindow();
         virtual void setTitle(const char* title) override {};
         virtual void setWidth(uint32_t width) override {};
         virtual void setHeight(uint32_t height) override {};
@@ -37,5 +40,6 @@ namespace Internal
         GLXContext m_Context;
         XWindowAttributes m_XWA;
         XEvent m_Event;
+        VulkanContext m_VContext;
     };
 }

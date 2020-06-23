@@ -8,6 +8,10 @@
 
 #include "Window.h"
 
+#include <vulkan/vulkan.hpp>
+
+#include <iostream>
+
 namespace Internal
 {
     Application* Application::s_Instance = nullptr;
@@ -16,6 +20,9 @@ namespace Internal
     {
         s_Instance = this;
         m_Window = Window::CreateWindow(data.m_WindowData);
+        uint32_t extenstionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extenstionCount, nullptr);
+        std::cout << extenstionCount << " extentions supported\n";
     }
 
     void Application::Run()

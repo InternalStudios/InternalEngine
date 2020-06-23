@@ -15,3 +15,4 @@ Makefile
 .vs/
 .vscode/
 *.vcxproj.user
+Internal/libs/vulkan/

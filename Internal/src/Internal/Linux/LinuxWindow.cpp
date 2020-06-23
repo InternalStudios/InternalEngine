@@ -32,9 +32,7 @@ namespace Internal
         m_Window = XCreateWindow(m_Display, m_Root, 0, 0, m_Data.width, m_Data.height, 0, m_VI->depth, InputOutput, m_VI->visual, CWColormap | CWEventMask, &m_SWA);
         XMapWindow(m_Display, m_Window);
         XStoreName(m_Display, m_Window, m_Data.Title);
-        m_Context = glXCreateContext(m_Display, m_VI, NULL, GL_TRUE);
-        glXMakeCurrent(m_Display, m_Window, m_Context);
-        gladLoadGL();
+        m_VContext.Init();
     }
 
     void LinuxWindow::OnUpdate()
@@ -43,8 +41,11 @@ namespace Internal
         if(m_Event.type == Expose)
         {
             XGetWindowAttributes(m_Display, m_Window, &m_XWA);
-            glViewport(0, 0, m_XWA.width, m_XWA.height);
-            glXSwapBuffers(m_Display, m_Window);
         }
+    }
+
+    LinuxWindow::~LinuxWindow()
+    {
+        m_VContext.Shutdown();
     }
 }
