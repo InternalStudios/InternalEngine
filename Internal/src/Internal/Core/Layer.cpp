@@ -7,5 +7,9 @@
 
 namespace Internal
 {
-
+    Layer::Layer(const char* name)
+        : m_Name(name)
+        {
+            
+        }
 }

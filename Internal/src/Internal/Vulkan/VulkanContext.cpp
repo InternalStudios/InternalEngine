@@ -27,7 +27,8 @@ VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMes
 	
 }
 
-void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) 
+{
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr) {
         func(instance, debugMessenger, pAllocator);
@@ -92,7 +93,7 @@ namespace Internal
 		createInfo.pApplicationInfo = &appInfo;
 
 		uint32_t windowExtensionCount = 2;
-		char** windowExtensions = new char*;
+		const char** windowExtensions = (const char**)new char*;
 
 		windowExtensions[0] = VK_KHR_SURFACE_EXTENSION_NAME;
 		#ifdef INTERNAL_LINUX
@@ -177,14 +178,31 @@ namespace Internal
 		std::vector<VkPhysicalDevice> devices(deviceCount);
 		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, devices.data());
 
+
 		for(const auto& device : devices)
 		{
-			bool isDeviceSutible = true;
-			VkPhysicalDeviceProperties deviceProperties;
-			vkGetPhysicalDeviceProperties(device, &deviceProperties);
-			VkPhysicalDeviceFeatures deviceFeatures;
-			vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
-			if(isDeviceSutible)
+			bool isDeviceSuitable;
+			QueueFamilyIndices indices;
+			uint32_t queueFamilyCount = 0;
+			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+			std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+			int i = 0;
+			for(const auto& queueFamily : queueFamilies)
+			{
+				if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+				{
+					indices.graphicsFamily = i;
+				}
+
+				i++;
+			}
+
+			isDeviceSuitable = indices.isComplete();
+
+			if(isDeviceSuitable)
 			{
 				m_PhysicalDevice = device;
 				break;
@@ -195,6 +213,9 @@ namespace Internal
 		{
 			s_Logger.Error("Failed to find a suitable GPU");
 		}
+
+
+
 	}
 
 	void VulkanContext::SwapBuffers()
@@ -217,6 +238,8 @@ namespace Internal
 		std::stringstream ss;
 		ss << "Validation layer: " << pCallbackData->pMessage;
 		s_Logger.Error(ss.str().c_str());
+		
+		return VK_FALSE;
 	}
 
 }

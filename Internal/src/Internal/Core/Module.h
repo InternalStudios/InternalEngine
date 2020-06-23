@@ -4,6 +4,8 @@
     Licence: IMG Public Licence
 */
 
+#pragma once
+
 namespace Internal
 {
 	class Module

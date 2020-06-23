@@ -12,9 +12,10 @@ namespace Internal
     {
     public:
         Layer(const char* name);
-        virtual void OnUpdate();
+        virtual void OnUpdate() = 0;
 
-        virtual void OnEvent();
+        virtual void OnEvent() = 0;
     private:
+        const char* m_Name;
     };
 }

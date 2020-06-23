@@ -12,9 +12,20 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <cstring>
+#include <optional>
 
 namespace Internal
 {
+	struct QueueFamilyIndices
+	{
+		std::optional<uint32_t> graphicsFamily;
+
+		bool isComplete()
+		{
+			return graphicsFamily.has_value();
+		}
+	};
+
 	class VulkanContext : public GraphicsContext
 	{
 	public:

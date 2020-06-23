@@ -21,7 +21,7 @@ project "InternalEngine"
 	location "Internal"
 	kind "StaticLib"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++20"
 	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
