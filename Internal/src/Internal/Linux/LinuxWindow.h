@@ -10,8 +10,6 @@
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include "glad/glad.h"
-#include "glad/glad_glx.h"
 
 #include "Internal/Vulkan/VulkanContext.h"
 
@@ -32,8 +30,7 @@ namespace Internal
     private:
         Display* m_Display;
         ::Window m_Root;
-        GLint m_Attributes[5] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-        XVisualInfo* m_VI;
+        Visual* m_Visual;
         Colormap m_CMap;
         XSetWindowAttributes m_SWA;
         ::Window m_Window;
@@ -41,5 +38,6 @@ namespace Internal
         XWindowAttributes m_XWA;
         XEvent m_Event;
         VulkanContext m_VContext;
+        int m_Depth;
     };
 }

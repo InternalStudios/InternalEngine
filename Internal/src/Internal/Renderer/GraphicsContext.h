@@ -8,11 +8,18 @@
 
 namespace Internal
 {
+    enum class GraphicsContexts
+    {
+        None = 0, OpenGL, Vulkan, DirectX, Metal
+    };
+
     class GraphicsContext
     {
     public:
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
         virtual void Shutdown() = 0;
+    public:
+        static GraphicsContexts s_GraphicsContext;
     };
 }

@@ -16,10 +16,11 @@ namespace Internal
         {
 
         }
-        gladLoadGLX(m_Display, 0);
+
+        m_Visual = DefaultVisual(m_Display, m_Root);
+        m_Depth = DefaultDepth(m_Display, m_Root);
 
         m_Root = DefaultRootWindow(m_Display);
-        m_VI = glXChooseVisual(m_Display, 0, m_Attributes);
         if(!m_VI)
         {
 
@@ -29,10 +30,13 @@ namespace Internal
         m_SWA.colormap = m_CMap;
         m_SWA.event_mask = ExposureMask | KeyPressMask;
 
-        m_Window = XCreateWindow(m_Display, m_Root, 0, 0, m_Data.width, m_Data.height, 0, m_VI->depth, InputOutput, m_VI->visual, CWColormap | CWEventMask, &m_SWA);
+        m_Window = XCreateWindow(m_Display, m_Root, 0, 0, m_Data.width, m_Data.height, 0, m_Depth, InputOutput, m_Visual, CWColormap | CWEventMask, &m_SWA);
         XMapWindow(m_Display, m_Window);
         XStoreName(m_Display, m_Window, m_Data.Title);
-        m_VContext.Init();
+        if (GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)
+        {
+            m_VContext.Init();
+        }
     }
 
     void LinuxWindow::OnUpdate()
