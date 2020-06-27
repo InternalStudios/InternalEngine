@@ -9,7 +9,6 @@
 #include <iostream>
 
 #include "Internal/Core/Window.h"
-#include "Internal/Linux/LinuxWindow.h"
 #include "Internal/Core/Application.h"
 #include "glad/glad.h"
 

@@ -9,6 +9,8 @@
 #include "Internal/Windows/WindowsWindow.h"
 #elif defined(INTERNAL_LINUX)
 #include "Internal/Linux/LinuxWindow.h"
+#elif defined(INTERNAL_MACOS)
+#include "Internal/MacOS/MacOSWindow.h"
 #endif
 #include "Window.h"
 
@@ -27,6 +29,8 @@ namespace Internal
 		return new WindowsWindow(data);
 		#elif defined(INTERNAL_LINUX)
 		return new LinuxWindow(data);
+		#elif defined(INTERNAL_MACOS)
+		return new MacOSWindow(data);
 		#endif
 	}
 }

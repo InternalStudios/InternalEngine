@@ -87,9 +87,18 @@ project "InternalEngine"
 
         files
         {
-            "Internal/src/Internal/MacOS/**.cpp",
+			"Internal/src/Internal/MacOS/**.cpp",
+            "Internal/src/Internal/MacOS/**.mm",
         	"Internal/src/Internal/MacOS/**.h"
-        }
+		}
+		
+		links
+		{
+			"CoreFoundation.framework",
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework"
+		}
 
 	filter "system:linux"	
 		systemversion "latest"
@@ -194,6 +203,11 @@ project "Sandbox"
 
 		links
 		{
+			"CoreFoundation.framework",
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework",
+			"vulkan"
 		}
 
 	filter "system:linux"	
