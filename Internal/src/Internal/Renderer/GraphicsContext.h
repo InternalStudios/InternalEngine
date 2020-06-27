@@ -10,7 +10,7 @@ namespace Internal
 {
     enum class GraphicsContexts
     {
-        None = 0, OpenGL, Vulkan, DirectX, Metal
+        OpenGL, Vulkan, DirectX, Metal
     };
 
     class GraphicsContext

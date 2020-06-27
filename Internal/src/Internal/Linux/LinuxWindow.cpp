@@ -17,16 +17,13 @@ namespace Internal
 
         }
 
-        m_Visual = DefaultVisual(m_Display, m_Root);
-        m_Depth = DefaultDepth(m_Display, m_Root);
 
         m_Root = DefaultRootWindow(m_Display);
-        if(!m_VI)
-        {
 
-        }
+        m_Visual = DefaultVisual(m_Display, 0);
+        m_Depth = DefaultDepth(m_Display, 0);
 
-        m_CMap = XCreateColormap(m_Display, m_Root, m_VI->visual, AllocNone);
+        m_CMap = XCreateColormap(m_Display, m_Root, m_Visual, AllocNone);
         m_SWA.colormap = m_CMap;
         m_SWA.event_mask = ExposureMask | KeyPressMask;
 

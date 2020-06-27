@@ -7,6 +7,8 @@
 #include "glad/glad.h"
 #include "glad/glad_wgl.h"
 
+#include "Internal/Renderer/GraphicsContext.h"
+
 #include <iostream>
 
 namespace Internal
@@ -59,30 +61,33 @@ namespace Internal
 
 
 		SetPixelFormat(m_HDC, format, &pfd);
-		HGLRC temp_cont = wglCreateContext(m_HDC);
-		wglMakeCurrent(m_HDC, temp_cont);
-
-		if (!gladLoadWGL(m_HDC))
-			std::cout << "Failed to load WGL";
-
-
-
-		int attributes[] = {
-			WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-			WGL_CONTEXT_MINOR_VERSION_ARB, 2,
-			WGL_CONTEXT_FLAGS_ARB,
-			WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-			0
-		};
-
-		m_Context = wglCreateContextAttribsARB(m_HDC, NULL, attributes);
-
-		wglMakeCurrent(NULL, NULL);
-		wglDeleteContext(temp_cont);
-		wglMakeCurrent(m_HDC, m_Context);
-		gladLoadGL();
-		ShowWindow(m_HWND, SW_SHOW);
-		glEnable(GL_DEPTH);
+		if(GraphicsContext::s_GraphicsContext == GraphicsContexts::OpenGL)
+		{
+			HGLRC temp_cont = wglCreateContext(m_HDC);
+			wglMakeCurrent(m_HDC, temp_cont);
+	
+			if (!gladLoadWGL(m_HDC))
+				std::cout << "Failed to load WGL";
+	
+	
+	
+			int attributes[] = {
+				WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+				WGL_CONTEXT_MINOR_VERSION_ARB, 2,
+				WGL_CONTEXT_FLAGS_ARB,
+				WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+				0
+			};
+	
+			m_Context = wglCreateContextAttribsARB(m_HDC, NULL, attributes);
+	
+			wglMakeCurrent(NULL, NULL);
+			wglDeleteContext(temp_cont);
+			wglMakeCurrent(m_HDC, m_Context);
+			gladLoadGL();
+			ShowWindow(m_HWND, SW_SHOW);
+			glEnable(GL_DEPTH);
+		}
 	}
 
 	WindowsWindow::~WindowsWindow()
