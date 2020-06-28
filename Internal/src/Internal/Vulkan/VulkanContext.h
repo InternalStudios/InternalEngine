@@ -9,7 +9,7 @@
 #include "Internal/Renderer/GraphicsContext.h"
 #include "Internal/Core/Logger.h"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vector>
 #include <cstring>
 #include <optional>

@@ -75,10 +75,20 @@ project "InternalEngine"
 		    "Internal/src/Internal/Windows/**.cpp",
             "Internal/src/Internal/Windows/**.h"
 		}
+
+		includedirs
+		{
+			"Internal/libs/vulkan/Windows/Include"
+		}
+
+		libdirs
+		{
+			"Internal/libs/vulkan/Windows/Lib"
+		}
 		
 		links
 		{
-			"opengl32"
+			"vulkan"
 		}
 
 	filter "system:macosx"

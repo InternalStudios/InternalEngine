@@ -88,11 +88,22 @@ namespace Internal
 			ShowWindow(m_HWND, SW_SHOW);
 			glEnable(GL_DEPTH);
 		}
+		else
+		{
+			m_VContext.Init();
+		}
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
-		wglDeleteContext(m_Context);
+		if (GraphicsContext::s_GraphicsContext == GraphicsContexts::OpenGL)
+		{
+			wglDeleteContext(m_Context);
+		}
+		else
+		{
+			m_VContext.Shutdown();
+		}
 		ReleaseDC(m_HWND, m_HDC);
 		DestroyWindow(m_HWND);
 	}

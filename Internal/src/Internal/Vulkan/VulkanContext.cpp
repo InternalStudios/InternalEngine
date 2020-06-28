@@ -93,11 +93,13 @@ namespace Internal
 		createInfo.pApplicationInfo = &appInfo;
 
 		uint32_t windowExtensionCount = 2;
-		const char** windowExtensions = (const char**)new char*;
+		const char* windowExtensions[2];
 
 		windowExtensions[0] = VK_KHR_SURFACE_EXTENSION_NAME;
 		#ifdef INTERNAL_LINUX
 		windowExtensions[1] = "VK_KHR_xlib_surface";
+		#elif defined(INTERNAL_WINDOWS)
+		windowExtensions[1] = "VK_KHR_win32_surface";
 		#endif 
 
 		std::vector<const char*> extensions(windowExtensions, windowExtensions + windowExtensionCount);
@@ -131,7 +133,7 @@ namespace Internal
 		}
 		
 
-		VkResult result = vkCreateInstance(&createInfo, nullptr, &m_Instance);
+		VkResult result = vkCreateInstance(&createInfo, NULL, &m_Instance);
 		if(result == VK_SUCCESS)
 		{
 			s_Logger.Info("Instance Created");
