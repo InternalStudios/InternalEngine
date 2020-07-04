@@ -6,10 +6,10 @@ variables:
 build:
   stage: build
   before_script:
-    - chmod +x vendor/bin/premake/premake5linux
+    - chmod +x premake/premake5
     - apt-get update
     - apt-get install -y libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev 
-    - vendor/bin/premake/premake5linux gmake2
+    - premake/premake5 gmake
   script:
     - make
   artifacts:
