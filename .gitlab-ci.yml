@@ -11,7 +11,7 @@ build:
     - apt-get install -y libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev 
     - premake/premake5 gmake
   script:
-    - make
+    - make -j6
   artifacts:
     paths:
       - bin/Debug-linux-x86_64/Sandbox/Sandbox
