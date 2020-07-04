@@ -27,7 +27,6 @@ namespace Internal
         virtual void OnEvent() override;
         virtual void OnTick() override;
     private:
-        HGLRC m_Context;
         HWND m_HWND;
         HDC m_HDC;
         VulkanContext m_VContext;

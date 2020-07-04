@@ -133,7 +133,7 @@ namespace Internal
 		}
 		
 
-		VkResult result = vkCreateInstance(&createInfo, NULL, &m_Instance);
+		VkResult result = vkCreateInstance(&createInfo, nullptr, &m_Instance);
 		if(result == VK_SUCCESS)
 		{
 			s_Logger.Info("Instance Created");
@@ -217,7 +217,7 @@ namespace Internal
 		}
 
 
-
+		
 	}
 
 	void VulkanContext::SwapBuffers()

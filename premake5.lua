@@ -229,8 +229,6 @@ project "Sandbox"
 		links
         {
             "X11",
-            "GL",
-			"GLU",
 			"dl"
 		}
 

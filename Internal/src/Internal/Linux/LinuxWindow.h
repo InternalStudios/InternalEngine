@@ -36,8 +36,6 @@ namespace Internal
         Colormap m_CMap;
         XSetWindowAttributes m_SWA;
         ::Window m_Window;
-        GLXContext m_Context;
-        GLint m_Attributes[5] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
         XWindowAttributes m_XWA;
         XEvent m_Event;
         VulkanContext m_VContext;
