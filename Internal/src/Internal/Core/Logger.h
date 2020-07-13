@@ -12,6 +12,7 @@ namespace Internal
 	{
 	public:
 		Logger(const char* name);
+		void Output(const char* message);
 		void Info(const char* message);
 		void Warn(const char* message);
 		void Error(const char* message);

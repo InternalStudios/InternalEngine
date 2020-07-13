@@ -14,6 +14,7 @@
 #include "glad/glad_glx.h"
 
 #include "Internal/Vulkan/VulkanContext.h"
+#include "Internal/Events/Event.h"
 
 namespace Internal
 {
@@ -27,7 +28,7 @@ namespace Internal
         virtual void setHeight(uint32_t height) override {};
 
         virtual void OnUpdate() override;
-        virtual void OnEvent() override {};
+        virtual void OnEvent(Event& e) override {};
         virtual void OnTick() override {};
     private:
         Display* m_Display;

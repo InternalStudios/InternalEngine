@@ -216,8 +216,6 @@ namespace Internal
 			s_Logger.Error("Failed to find a suitable GPU");
 		}
 
-
-		
 	}
 
 	void VulkanContext::SwapBuffers()
@@ -239,7 +237,7 @@ namespace Internal
 	{
 		std::stringstream ss;
 		ss << "Validation layer: " << pCallbackData->pMessage;
-		s_Logger.Error(ss.str().c_str());
+		s_Logger.Output(ss.str().c_str());
 		
 		return VK_FALSE;
 	}
