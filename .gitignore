@@ -15,3 +15,5 @@ Makefile
 .vs/
 .vscode/
 *.vcxproj.user
+
+.idea/
