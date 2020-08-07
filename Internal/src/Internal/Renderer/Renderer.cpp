@@ -4,14 +4,9 @@
     Licence: IMG Public Licence
 */
 
-#pragma once
+#include "Renderer.h"
 
 namespace Internal
 {
-    class Renderer
-    {
-    public:
-        static void Init();
-        static void Shutdown();
-    };
+
 }
