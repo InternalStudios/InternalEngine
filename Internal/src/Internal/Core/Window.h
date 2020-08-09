@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "Module.h"
+#include <vulkan/vulkan.h>
 
 #define CreateWindow CreateWindow
 
@@ -41,6 +42,7 @@ namespace Internal
 
         virtual void OnUpdate() = 0;
         virtual void OnTick() = 0;
+        virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface);
 
         static Window* CreateWindow(const WindowData& data);
     protected:

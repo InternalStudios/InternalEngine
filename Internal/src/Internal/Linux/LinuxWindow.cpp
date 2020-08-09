@@ -49,4 +49,9 @@ namespace Internal
     {
         m_VContext.Shutdown();
     }
+
+    void LinuxWindow::CreateSurface(VkInstance &instance, VkSurfaceKHR *surface)
+    {
+        m_Surface.Init(m_Window, m_Display, instance, surface);
+    }
 }

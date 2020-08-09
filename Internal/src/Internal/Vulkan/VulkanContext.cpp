@@ -13,6 +13,12 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include "Internal/Core/Application.h"
+#ifdef INTERNAL_WINDOWS
+#include <windows.h>
+#include "Internal/Windows/WindowsWindow.h"
+#endif
+
 
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
 {
@@ -37,6 +43,26 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 
 namespace Internal
 {
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
+    {
+        QueueFamilyIndices indices;
+        uint32_t queueFamilyCount = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+        int i = 0;
+        for (const auto& queueFamily : queueFamilies) {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphicsFamily = i;
+            }
+
+            i++;
+        }
+
+        return indices;
+    }
 
 	Logger VulkanContext::s_Logger("VulkanContext");
 
@@ -190,7 +216,6 @@ namespace Internal
 
 			std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-+++-
 			int i = 0;
 			for(const auto& queueFamily : queueFamilies)
 			{
@@ -216,6 +241,37 @@ namespace Internal
 			s_Logger.Error("Failed to find a suitable GPU");
 		}
 
+		QueueFamilyIndices inds = findQueueFamilies(m_PhysicalDevice);
+
+        VkDeviceQueueCreateInfo queueCreateInfo {};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = inds.graphicsFamily.value();
+        queueCreateInfo.queueCount = 1;
+        float queuePriority = 1.0f;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        VkPhysicalDeviceFeatures deviceFeatures {};
+
+        VkDeviceCreateInfo dCreateInfo {};
+        dCreateInfo.sType =  VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        dCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+        dCreateInfo.pEnabledFeatures = &deviceFeatures;
+        dCreateInfo.enabledExtensionCount = 0;
+        if(m_ValidationLayersEnabled)
+        {
+            dCreateInfo.enabledLayerCount = static_cast<uint32_t>(m_ValidationLayers.size());
+            dCreateInfo.ppEnabledLayerNames = m_ValidationLayers.data();
+        } else
+        {
+            dCreateInfo.enabledLayerCount = 0;
+        }
+
+        if(vkCreateDevice(m_PhysicalDevice, &dCreateInfo, nullptr, &m_LogicalDevice) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to create logical device");
+        }
+
+        vkGetDeviceQueue(m_LogicalDevice, inds.graphicsFamily.value(), 0, &m_Queue);
+        Application::Get()->GetWindow()->CreateSurface(m_Instance, &m_Surface);
 	}
 
 	void VulkanContext::SwapBuffers()
@@ -225,6 +281,7 @@ namespace Internal
 
 	void VulkanContext::Shutdown()
 	{
+	    vkDestroyDevice(m_LogicalDevice, nullptr);
 		if(m_ValidationLayersEnabled)
 		{
 			DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);

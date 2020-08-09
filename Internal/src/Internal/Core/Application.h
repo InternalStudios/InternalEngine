@@ -26,6 +26,8 @@ namespace Internal
         void Run();
         void OnEvent();
         static Application* CreateApplication();
+        static Application* Get() {return s_Instance;}
+        Window* GetWindow() {return m_Window;}
     protected:
         Application(const ApplicationData& data);
     private:

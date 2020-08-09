@@ -11,6 +11,7 @@
 #include "Internal/Core/Window.h"
 #include "Internal/Vulkan/VulkanContext.h"
 
+
 namespace Internal
 {
     class WindowsWindow : public Window

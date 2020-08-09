@@ -15,6 +15,7 @@
 
 #include "Internal/Vulkan/VulkanContext.h"
 #include "Internal/Events/Event.h"
+#include "LinuxVSurface.h"
 
 namespace Internal
 {
@@ -30,6 +31,7 @@ namespace Internal
         virtual void OnUpdate() override;
         virtual void OnEvent(Event& e) override {};
         virtual void OnTick() override {};
+        virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface) override;
     private:
         Display* m_Display;
         ::Window m_Root;
@@ -41,5 +43,6 @@ namespace Internal
         XEvent m_Event;
         VulkanContext m_VContext;
         int m_Depth;
+        LinuxVSurface m_Surface;
     };
 }

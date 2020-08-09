@@ -9,7 +9,7 @@
 #include "Internal/Renderer/GraphicsContext.h"
 #include "Internal/Core/Logger.h"
 
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 #include <vector>
 #include <cstring>
 #include <optional>
@@ -42,6 +42,9 @@ namespace Internal
 		};
 		bool m_ValidationLayersEnabled;
 		VkDebugUtilsMessengerEXT m_DebugMessenger;
+		VkSurfaceKHR m_Surface;
 		VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
+		VkDevice m_LogicalDevice;
+		VkQueue m_Queue;
 	};
 }
