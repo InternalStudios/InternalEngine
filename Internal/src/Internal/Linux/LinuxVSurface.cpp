@@ -6,7 +6,7 @@
 
 namespace Internal
 {
-    void LinuxVSurface::Init(::Window window, ::Display display, VkInstance& instance, VkSurfaceKHR* surface)
+    void LinuxVSurface::Init(::Window window, ::Display* display, VkInstance& instance, VkSurfaceKHR* surface)
     {
         VkXlibSurfaceCreateInfoKHR createInfo {};
         createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;

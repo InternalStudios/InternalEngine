@@ -42,7 +42,7 @@ namespace Internal
 
         virtual void OnUpdate() = 0;
         virtual void OnTick() = 0;
-        virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface);
+        virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface) = 0;
 
         static Window* CreateWindow(const WindowData& data);
     protected:

@@ -139,7 +139,7 @@ project "InternalEngine"
 		links
 		{
 			"vulkan",
-			"mono-2"
+			"mono-2.0"
 		}
 
     filter "configurations:Debug"
@@ -231,7 +231,7 @@ project "Sandbox"
         {
             "X11",
 			"dl",
-			"mono-2",
+			"mono-2.0",
 			"m",
 			"rt",
 			"pthread"
