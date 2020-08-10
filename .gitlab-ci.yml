@@ -11,7 +11,7 @@ build:
     - echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | tee /etc/apt/sources.list.d/mono-official-stable.list
     - apt update
     - apt install -y mono-devel
-    - cp /usr/include/mono-2.0/* /usr/include
+    - cp -r /usr/include/mono-2.0/* /usr/include
     - chmod +x premake/premake5
     - apt-get update
     - apt-get install -y libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev 
