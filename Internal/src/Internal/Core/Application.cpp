@@ -19,15 +19,19 @@ namespace Internal
     {
         s_Instance = this;
         //m_Window = Window::CreateWindow(data.m_WindowData);
-        Script discord("Discord", "Discord.exe");
-
+        auto result = discord::Core::Create(705604900792565821, DiscordCreateFlags_NoRequireDiscord, &m_Discord);
+        discord::Activity activity {};
+        activity.SetDetails("Testing");
+        activity.SetState("Testing");
+        m_Discord->ActivityManager().UpdateActivity(activity, [](discord::Result result){});
     }
 
     void Application::Run()
     {
         while (!Window::ShouldClose())
         {
-            m_Window->OnUpdate();
+            //m_Window->OnUpdate();
+            m_Discord->RunCallbacks();
         }
     }
 

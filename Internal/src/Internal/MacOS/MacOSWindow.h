@@ -22,7 +22,6 @@ namespace Internal
         virtual void setHeight(uint32_t height) override {};
 
         virtual void OnUpdate() override {};
-        virtual void OnEvent() override {};
         virtual void OnTick() override {};
 
     private:

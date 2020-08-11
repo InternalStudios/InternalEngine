@@ -58,7 +58,7 @@ project "InternalEngine"
 
 	links
 	{
-	    "Discord"
+	    "discord_game_sdk"
 	}
 
 	filter "system:windows"

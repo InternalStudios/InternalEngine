@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Window.h"
-
+#include "discord.h"
 
 namespace Internal
 {
@@ -34,5 +34,6 @@ namespace Internal
     private:
         static Application* s_Instance;
         Window* m_Window;
+        discord::Core* m_Discord {};
     };
 }
