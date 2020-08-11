@@ -14,8 +14,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["Glad"] = "Internal/libs/glad/include"
+IncludeDir["discord"] = "Internal/libs/discord/c"
 
 include "Internal/libs/glad"
+include "Internal/libs/discord"
 
 project "InternalEngine"
 	location "Internal"
@@ -50,11 +52,14 @@ project "InternalEngine"
 	includedirs
 	{
         "Internal/src",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.discord}"
+
 	}
 
 	links
 	{
+	    "Discord"
 	}
 
 	filter "system:windows"
@@ -177,14 +182,16 @@ project "Sandbox"
 	includedirs
 	{
 		"Internal/src",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.discord}"
 	}
 
 
 	links
 	{
         "InternalEngine",
-		"Glad"
+		"Glad",
+		"discord"
 	}
 		
 

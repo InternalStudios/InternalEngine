@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Window.h"
+#include "discord_game_sdk.h"
 
 namespace Internal
 {
@@ -33,5 +34,7 @@ namespace Internal
     private:
         static Application* s_Instance;
         Window* m_Window;
+        IDiscordCore* core;
+        IDiscordUsers* users;
     };
 }

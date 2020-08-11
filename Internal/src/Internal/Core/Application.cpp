@@ -18,6 +18,7 @@ namespace Internal
     {
         s_Instance = this;
         m_Window = Window::CreateWindow(data.m_WindowData);
+
     }
 
     void Application::Run()

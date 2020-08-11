@@ -18,11 +18,13 @@ namespace Internal
 {
 	struct QueueFamilyIndices
 	{
-		std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
+
 
 		bool isComplete()
 		{
-			return graphicsFamily.has_value();
+			return graphicsFamily.has_value() && presentFamily.has_value();
 		}
 	};
 
@@ -45,6 +47,7 @@ namespace Internal
 		VkSurfaceKHR m_Surface;
 		VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
 		VkDevice m_LogicalDevice;
-		VkQueue m_Queue;
+		VkQueue m_GraphicsQueue;
+		VkQueue m_PresentQueue;
 	};
 }

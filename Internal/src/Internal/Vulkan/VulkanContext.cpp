@@ -13,6 +13,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <set>
 #include "Internal/Core/Application.h"
 #ifdef INTERNAL_WINDOWS
 #include <windows.h>
@@ -43,7 +44,7 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 
 namespace Internal
 {
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
     {
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
@@ -58,6 +59,12 @@ namespace Internal
                 indices.graphicsFamily = i;
             }
 
+            VkBool32 presentSupport = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+            if(presentSupport)
+            {
+                indices.presentFamily = i;
+            }
             i++;
         }
 
@@ -184,7 +191,7 @@ namespace Internal
 		{
 			VkDebugUtilsMessengerCreateInfoEXT mCreateInfo = {};
 			mCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-			mCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT*/;
+			mCreateInfo.messageSeverity = /*VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |*/ VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT /*| VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT*/;
 			mCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
 			mCreateInfo.pfnUserCallback = debugCallback;
 			mCreateInfo.pUserData = nullptr;
@@ -194,6 +201,7 @@ namespace Internal
 				s_Logger.Error("Failed to setup debug messenger");
 			}
 		}
+        Application::Get()->GetWindow()->CreateSurface(m_Instance, &m_Surface);
 
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
@@ -210,22 +218,7 @@ namespace Internal
 		for(const auto& device : devices)
 		{
 			bool isDeviceSuitable;
-			QueueFamilyIndices indices;
-			uint32_t queueFamilyCount = 0;
-			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-			std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-			vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-			int i = 0;
-			for(const auto& queueFamily : queueFamilies)
-			{
-				if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-				{
-					indices.graphicsFamily = i;
-				}
-
-				i++;
-			}
+			QueueFamilyIndices indices = findQueueFamilies(device, m_Surface);
 
 			isDeviceSuitable = indices.isComplete();
 
@@ -241,19 +234,27 @@ namespace Internal
 			s_Logger.Error("Failed to find a suitable GPU");
 		}
 
-		QueueFamilyIndices inds = findQueueFamilies(m_PhysicalDevice);
+		QueueFamilyIndices inds = findQueueFamilies(m_PhysicalDevice, m_Surface);
 
-        VkDeviceQueueCreateInfo queueCreateInfo {};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = inds.graphicsFamily.value();
-        queueCreateInfo.queueCount = 1;
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<uint32_t> uniqueQueueFamilies = {inds.graphicsFamily.value(), inds.presentFamily.value()};
         float queuePriority = 1.0f;
-        queueCreateInfo.pQueuePriorities = &queuePriority;
+
+        for(uint32_t queueFamily : uniqueQueueFamilies) {
+
+            VkDeviceQueueCreateInfo queueCreateInfo{};
+            queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfo.queueFamilyIndex = inds.graphicsFamily.value();
+            queueCreateInfo.queueCount = 1;
+            queueCreateInfo.pQueuePriorities = &queuePriority;
+            queueCreateInfos.push_back(queueCreateInfo);
+        }
         VkPhysicalDeviceFeatures deviceFeatures {};
 
         VkDeviceCreateInfo dCreateInfo {};
         dCreateInfo.sType =  VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        dCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+        dCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+        dCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
         dCreateInfo.pEnabledFeatures = &deviceFeatures;
         dCreateInfo.enabledExtensionCount = 0;
         if(m_ValidationLayersEnabled)
@@ -270,8 +271,8 @@ namespace Internal
             s_Logger.Error("Failed to create logical device");
         }
 
-        vkGetDeviceQueue(m_LogicalDevice, inds.graphicsFamily.value(), 0, &m_Queue);
-        Application::Get()->GetWindow()->CreateSurface(m_Instance, &m_Surface);
+        vkGetDeviceQueue(m_LogicalDevice, inds.graphicsFamily.value(), 0, &m_GraphicsQueue);
+        vkGetDeviceQueue(m_LogicalDevice, inds.presentFamily.value(), 0, &m_PresentQueue);
 	}
 
 	void VulkanContext::SwapBuffers()
