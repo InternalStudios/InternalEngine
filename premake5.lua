@@ -17,6 +17,7 @@ IncludeDir["Glad"] = "Internal/libs/glad/include"
 IncludeDir["discord"] = "Internal/libs/discord/cpp"
 
 include "Internal/libs/glad"
+include "Internal/libs/discord"
 
 project "InternalEngine"
 	location "Internal"
@@ -194,7 +195,8 @@ project "Sandbox"
 	{
         "InternalEngine",
 		"Glad",
-		"discord_game_sdk"
+		"discord_game_sdk",
+		"discord"
 	}
 
 	filter "system:windows"

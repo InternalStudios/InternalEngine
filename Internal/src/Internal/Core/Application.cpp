@@ -10,6 +10,7 @@
 #include "Script.h"
 
 #include <iostream>
+#include <time.h>
 
 namespace Internal
 {
@@ -23,7 +24,11 @@ namespace Internal
         discord::Activity activity {};
         activity.SetDetails("Testing");
         activity.SetState("Testing");
+        activity.GetAssets().SetLargeImage("ielogo");
+        activity.SetType(discord::ActivityType::Streaming);
+        activity.GetTimestamps().SetStart(time(NULL));
         m_Discord->ActivityManager().UpdateActivity(activity, [](discord::Result result){});
+        
     }
 
     void Application::Run()
