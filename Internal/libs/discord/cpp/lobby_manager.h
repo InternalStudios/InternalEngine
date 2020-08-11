@@ -1,7 +1,7 @@
 #pragma once
 
 #include "types.h"
-
+#include <cstdint>
 namespace discord {
 
 class LobbyManager final {

@@ -14,10 +14,9 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["Glad"] = "Internal/libs/glad/include"
-IncludeDir["discord"] = "Internal/libs/discord/c"
+IncludeDir["discord"] = "Internal/libs/discord/cpp"
 
 include "Internal/libs/glad"
-include "Internal/libs/discord"
 
 project "InternalEngine"
 	location "Internal"
@@ -90,7 +89,7 @@ project "InternalEngine"
 		{
 			"Internal/libs/vulkan/Windows/Lib"
 		}
-		
+
 		links
 		{
 			"vulkan"
@@ -106,7 +105,7 @@ project "InternalEngine"
             "Internal/src/Internal/MacOS/**.mm",
         	"Internal/src/Internal/MacOS/**.h"
 		}
-		
+
 		links
 		{
 			"CoreFoundation.framework",
@@ -115,12 +114,12 @@ project "InternalEngine"
 			"CoreVideo.framework"
 		}
 
-	filter "system:linux"	
+	filter "system:linux"
 		systemversion "latest"
 		defines
 		{
         }
-        
+
 		links
 		{
 		}
@@ -186,14 +185,17 @@ project "Sandbox"
 		"%{IncludeDir.discord}"
 	}
 
+	libdirs
+    {
+     	"Internal/libs/discord/lib/x86_64"
+    }
 
 	links
 	{
         "InternalEngine",
 		"Glad",
-		"discord"
+		"discord_game_sdk"
 	}
-		
 
 	filter "system:windows"
 		cppdialect "C++17"

@@ -13,7 +13,7 @@
 #include "store_manager.h"
 #include "voice_manager.h"
 #include "achievement_manager.h"
-
+#include <cstdint>
 namespace discord {
 
 class Core final {

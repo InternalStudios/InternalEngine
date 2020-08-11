@@ -50,7 +50,6 @@ namespace Discord
         InvalidGiftCode = 41,
         PurchaseError = 42,
         TransactionAborted = 43,
-        DrawingInitFailed = 44,
     }
 
     public enum CreateFlags
@@ -155,20 +154,6 @@ namespace Discord
         Default,
         Extended,
         Global,
-    }
-
-    public enum KeyVariant
-    {
-        Normal,
-        Right,
-        Left,
-    }
-
-    public enum MouseButton
-    {
-        Left,
-        Middle,
-        Right,
     }
 
     public enum EntitlementType
@@ -357,32 +342,6 @@ namespace Discord
         public UInt32 Capacity;
 
         public bool Locked;
-    }
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public partial struct ImeUnderline
-    {
-        public Int32 From;
-
-        public Int32 To;
-
-        public UInt32 Color;
-
-        public UInt32 BackgroundColor;
-
-        public bool Thick;
-    }
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public partial struct Rect
-    {
-        public Int32 Left;
-
-        public Int32 Top;
-
-        public Int32 Right;
-
-        public Int32 Bottom;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -1031,7 +990,7 @@ namespace Discord
             OverlayEvents = new OverlayManager.FFIEvents();
             OverlayEventsPtr = Marshal.AllocHGlobal(Marshal.SizeOf(OverlayEvents));
             createParams.OverlayEvents = OverlayEventsPtr;
-            createParams.OverlayVersion = 2;
+            createParams.OverlayVersion = 1;
             StorageEvents = new StorageManager.FFIEvents();
             StorageEventsPtr = Marshal.AllocHGlobal(Marshal.SizeOf(StorageEvents));
             createParams.StorageEvents = StorageEventsPtr;
@@ -3193,51 +3152,6 @@ namespace Discord
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             internal delegate void OpenVoiceSettingsMethod(IntPtr methodsPtr, IntPtr callbackData, OpenVoiceSettingsCallback callback);
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate Result InitDrawingDxgiMethod(IntPtr methodsPtr, IntPtr swapchain, bool useMessageForwarding);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void OnPresentMethod(IntPtr methodsPtr);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void ForwardMessageMethod(IntPtr methodsPtr, IntPtr message);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void KeyEventMethod(IntPtr methodsPtr, bool down, [MarshalAs(UnmanagedType.LPStr)]string keyCode, KeyVariant variant);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void CharEventMethod(IntPtr methodsPtr, [MarshalAs(UnmanagedType.LPStr)]string character);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void MouseButtonEventMethod(IntPtr methodsPtr, byte down, Int32 clickCount, MouseButton which, Int32 x, Int32 y);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void MouseMotionEventMethod(IntPtr methodsPtr, Int32 x, Int32 y);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void ImeCommitTextMethod(IntPtr methodsPtr, [MarshalAs(UnmanagedType.LPStr)]string text);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void ImeSetCompositionMethod(IntPtr methodsPtr, [MarshalAs(UnmanagedType.LPStr)]string text, ref ImeUnderline underlines, Int32 from, Int32 to);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void ImeCancelCompositionMethod(IntPtr methodsPtr);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void SetImeCompositionRangeCallbackCallback(IntPtr ptr, Int32 from, Int32 to, ref Rect bounds);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void SetImeCompositionRangeCallbackMethod(IntPtr methodsPtr, IntPtr callbackData, SetImeCompositionRangeCallbackCallback callback);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void SetImeSelectionBoundsCallbackCallback(IntPtr ptr, Rect anchor, Rect focus, bool isAnchorFirst);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate void SetImeSelectionBoundsCallbackMethod(IntPtr methodsPtr, IntPtr callbackData, SetImeSelectionBoundsCallbackCallback callback);
-
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate bool IsPointInsideClickZoneMethod(IntPtr methodsPtr, Int32 x, Int32 y);
-
             internal IsEnabledMethod IsEnabled;
 
             internal IsLockedMethod IsLocked;
@@ -3249,32 +3163,6 @@ namespace Discord
             internal OpenGuildInviteMethod OpenGuildInvite;
 
             internal OpenVoiceSettingsMethod OpenVoiceSettings;
-
-            internal InitDrawingDxgiMethod InitDrawingDxgi;
-
-            internal OnPresentMethod OnPresent;
-
-            internal ForwardMessageMethod ForwardMessage;
-
-            internal KeyEventMethod KeyEvent;
-
-            internal CharEventMethod CharEvent;
-
-            internal MouseButtonEventMethod MouseButtonEvent;
-
-            internal MouseMotionEventMethod MouseMotionEvent;
-
-            internal ImeCommitTextMethod ImeCommitText;
-
-            internal ImeSetCompositionMethod ImeSetComposition;
-
-            internal ImeCancelCompositionMethod ImeCancelComposition;
-
-            internal SetImeCompositionRangeCallbackMethod SetImeCompositionRangeCallback;
-
-            internal SetImeSelectionBoundsCallbackMethod SetImeSelectionBoundsCallback;
-
-            internal IsPointInsideClickZoneMethod IsPointInsideClickZone;
         }
 
         public delegate void SetLockedHandler(Result result);
@@ -3284,10 +3172,6 @@ namespace Discord
         public delegate void OpenGuildInviteHandler(Result result);
 
         public delegate void OpenVoiceSettingsHandler(Result result);
-
-        public delegate void SetImeCompositionRangeCallbackHandler(Int32 from, Int32 to, ref Rect bounds);
-
-        public delegate void SetImeSelectionBoundsCallbackHandler(Rect anchor, Rect focus, bool isAnchorFirst);
 
         public delegate void ToggleHandler(bool locked);
 
@@ -3400,99 +3284,6 @@ namespace Discord
         {
             GCHandle wrapped = GCHandle.Alloc(callback);
             Methods.OpenVoiceSettings(MethodsPtr, GCHandle.ToIntPtr(wrapped), OpenVoiceSettingsCallbackImpl);
-        }
-
-        public void InitDrawingDxgi(IntPtr swapchain, bool useMessageForwarding)
-        {
-            var res = Methods.InitDrawingDxgi(MethodsPtr, swapchain, useMessageForwarding);
-            if (res != Result.Ok)
-            {
-                throw new ResultException(res);
-            }
-        }
-
-        public void OnPresent()
-        {
-            Methods.OnPresent(MethodsPtr);
-        }
-
-        public void ForwardMessage(IntPtr message)
-        {
-            Methods.ForwardMessage(MethodsPtr, message);
-        }
-
-        public void KeyEvent(bool down, string keyCode, KeyVariant variant)
-        {
-            Methods.KeyEvent(MethodsPtr, down, keyCode, variant);
-        }
-
-        public void CharEvent(string character)
-        {
-            Methods.CharEvent(MethodsPtr, character);
-        }
-
-        public void MouseButtonEvent(byte down, Int32 clickCount, MouseButton which, Int32 x, Int32 y)
-        {
-            Methods.MouseButtonEvent(MethodsPtr, down, clickCount, which, x, y);
-        }
-
-        public void MouseMotionEvent(Int32 x, Int32 y)
-        {
-            Methods.MouseMotionEvent(MethodsPtr, x, y);
-        }
-
-        public void ImeCommitText(string text)
-        {
-            Methods.ImeCommitText(MethodsPtr, text);
-        }
-
-        public void ImeSetComposition(string text, ImeUnderline underlines, Int32 from, Int32 to)
-        {
-            Methods.ImeSetComposition(MethodsPtr, text, ref underlines, from, to);
-        }
-
-        public void ImeCancelComposition()
-        {
-            Methods.ImeCancelComposition(MethodsPtr);
-        }
-
-        [MonoPInvokeCallback]
-        private static void SetImeCompositionRangeCallbackCallbackImpl(IntPtr ptr, Int32 from, Int32 to, ref Rect bounds)
-        {
-            GCHandle h = GCHandle.FromIntPtr(ptr);
-            SetImeCompositionRangeCallbackHandler callback = (SetImeCompositionRangeCallbackHandler)h.Target;
-            h.Free();
-            callback(from, to, ref bounds);
-        }
-
-        public void SetImeCompositionRangeCallback(SetImeCompositionRangeCallbackHandler callback)
-        {
-            GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.SetImeCompositionRangeCallback(MethodsPtr, GCHandle.ToIntPtr(wrapped), SetImeCompositionRangeCallbackCallbackImpl);
-        }
-
-        [MonoPInvokeCallback]
-        private static void SetImeSelectionBoundsCallbackCallbackImpl(IntPtr ptr, Rect anchor, Rect focus, bool isAnchorFirst)
-        {
-            GCHandle h = GCHandle.FromIntPtr(ptr);
-            SetImeSelectionBoundsCallbackHandler callback = (SetImeSelectionBoundsCallbackHandler)h.Target;
-            h.Free();
-            callback(anchor, focus, isAnchorFirst);
-        }
-
-        public void SetImeSelectionBoundsCallback(SetImeSelectionBoundsCallbackHandler callback)
-        {
-            GCHandle wrapped = GCHandle.Alloc(callback);
-            Methods.SetImeSelectionBoundsCallback(MethodsPtr, GCHandle.ToIntPtr(wrapped), SetImeSelectionBoundsCallbackCallbackImpl);
-        }
-
-        public void IsPointInsideClickZone(Int32 x, Int32 y)
-        {
-            var res = Methods.IsPointInsideClickZone(MethodsPtr, x, y);
-            if (res != Result.Ok)
-            {
-                throw new ResultException(res);
-            }
         }
 
         [MonoPInvokeCallback]
