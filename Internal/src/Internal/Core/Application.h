@@ -8,6 +8,7 @@
 
 #include "Window.h"
 #include "discord.h"
+#include "Internal/Vulkan/VulkanContext.h"
 
 namespace Internal
 {
@@ -35,5 +36,6 @@ namespace Internal
         static Application* s_Instance;
         Window* m_Window;
         discord::Core* m_Discord {};
+        VulkanContext m_VContext;
     };
 }

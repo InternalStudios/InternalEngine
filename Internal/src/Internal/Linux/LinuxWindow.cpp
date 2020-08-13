@@ -30,10 +30,6 @@ namespace Internal
         m_Window = XCreateWindow(m_Display, m_Root, 0, 0, m_Data.width, m_Data.height, 0, m_Depth, InputOutput, m_Visual, CWColormap | CWEventMask, &m_SWA);
         XMapWindow(m_Display, m_Window);
         XStoreName(m_Display, m_Window, m_Data.Title);
-        if (GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)
-        {
-            m_VContext.Init();
-        }
     }
 
     void LinuxWindow::OnUpdate()
@@ -47,7 +43,6 @@ namespace Internal
 
     LinuxWindow::~LinuxWindow()
     {
-        m_VContext.Shutdown();
     }
 
     void LinuxWindow::CreateSurface(VkInstance &instance, VkSurfaceKHR *surface)

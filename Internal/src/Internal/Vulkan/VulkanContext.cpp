@@ -201,9 +201,9 @@ namespace Internal
 				s_Logger.Error("Failed to setup debug messenger");
 			}
 		}
-		
-        Application::Get()->GetWindow()->CreateSurface(m_Instance, &m_Surface);
 
+        Application::Get()->GetWindow()->CreateSurface(m_Instance, &m_Surface);
+		
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
 

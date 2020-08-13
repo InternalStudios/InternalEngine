@@ -41,7 +41,6 @@ namespace Internal
         ::Window m_Window;
         XWindowAttributes m_XWA;
         XEvent m_Event;
-        VulkanContext m_VContext;
         int m_Depth;
         LinuxVSurface m_Surface;
     };
