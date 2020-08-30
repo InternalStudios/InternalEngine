@@ -38,6 +38,7 @@ namespace Internal
         if(m_Event.type == Expose)
         {
             XGetWindowAttributes(m_Display, m_Window, &m_XWA);
+            
         }
     }
 

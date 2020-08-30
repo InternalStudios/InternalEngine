@@ -13,6 +13,8 @@
 #include <vector>
 #include <cstring>
 #include <optional>
+#include <string>
+
 
 namespace Internal
 {
@@ -28,6 +30,13 @@ namespace Internal
 		}
 	};
 
+	struct SwapChainSupportDetails
+	{
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
+
 	class VulkanContext : public GraphicsContext
 	{
 	public:
@@ -37,10 +46,16 @@ namespace Internal
 		virtual void Shutdown() override;
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 	private:
+		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+        std::vector<char> readFile(const std::string& filename);
+        VkShaderModule createShaderModule(const std::vector<char>& code);
 		VkInstance m_Instance;
 		static Logger s_Logger;
 		const std::vector<const char*> m_ValidationLayers = {
 			"VK_LAYER_KHRONOS_validation"
+		};
+		const std::vector<const char*> m_DeviceExtensions = {
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME
 		};
 		bool m_ValidationLayersEnabled;
 		VkDebugUtilsMessengerEXT m_DebugMessenger;
@@ -49,5 +64,15 @@ namespace Internal
 		VkDevice m_LogicalDevice;
 		VkQueue m_GraphicsQueue;
 		VkQueue m_PresentQueue;
+
+		VkSwapchainKHR m_SwapChain;
+		std::vector<VkImage> m_SwapChainImages;
+		VkFormat m_SwapChainImageFormat;
+		VkExtent2D m_SwapChainExtent;
+		std::vector<VkImageView> m_SwapChainImageViews;
+
+		VkRenderPass m_RenderPass;
+		VkPipelineLayout m_PipelineLayout;
+		VkPipeline m_GraphicsPipeline;
 	};
 }
