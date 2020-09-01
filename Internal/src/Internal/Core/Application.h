@@ -9,6 +9,9 @@
 #include "Window.h"
 #include "discord.h"
 #include "Internal/Vulkan/VulkanContext.h"
+#include "Internal/Events/Event.h"
+#include "Internal/Events/KeyboardEvent.h"
+#include "Logger.h"
 
 namespace Internal
 {
@@ -26,10 +29,12 @@ namespace Internal
     {
     public:
         void Run();
-        void OnEvent();
+        void OnEvent(Event& e);
         static Application* CreateApplication();
         static Application* Get() {return s_Instance;}
         Window* GetWindow() {return m_Window;}
+        Logger& GetLogger() {return m_Logger;}
+        static bool OnKeyPressed(KeyPressedEvent& e);
     protected:
         Application(const ApplicationData& data);
     private:
@@ -37,5 +42,6 @@ namespace Internal
         Window* m_Window;
         discord::Core* m_Discord {};
         VulkanContext m_VContext;
+        Logger m_Logger;
     };
 }

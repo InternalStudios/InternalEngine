@@ -9,7 +9,9 @@
 #include "Window.h"
 #include "Script.h"
 #include "Internal/Renderer/GraphicsContext.h"
-
+#include "Internal/Events/KeyboardEvent.h"
+#include "Internal/Events/EventHandler.h"
+#include <sstream>
 #include <iostream>
 #include <time.h>
 
@@ -18,6 +20,7 @@ namespace Internal
     Application* Application::s_Instance = nullptr;
 
     Application::Application(const ApplicationData& data)
+        : m_Logger("Application")
     {
         s_Instance = this;
         m_Window = Window::CreateWindow(data.m_WindowData);
@@ -25,6 +28,8 @@ namespace Internal
         {
             m_VContext.Init();
         }
+        if(false)
+        {
         auto result = discord::Core::Create(705604900792565821, DiscordCreateFlags_NoRequireDiscord, &m_Discord);
         discord::Activity activity {};
         activity.SetDetails("Testing");
@@ -32,14 +37,18 @@ namespace Internal
         activity.GetAssets().SetLargeImage("ielogo");
         activity.GetTimestamps().SetStart(time(NULL));
         m_Discord->ActivityManager().UpdateActivity(activity, [](discord::Result result){});
+        }
+
     }
 
     void Application::Run()
     {
-        while (!Window::ShouldClose())
+        while (1)
         {
+            m_Logger.Info("Update");
             m_Window->OnUpdate();
-            m_Discord->RunCallbacks();
+            m_VContext.SwapBuffers();
+            //m_Discord->RunCallbacks();
         }
 
         if (GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)
@@ -48,8 +57,17 @@ namespace Internal
         }
     }
 
-    void Application::OnEvent()
+    void Application::OnEvent(Event& e)
     {
+        EventHandler h;
+        h.Dispatch<KeyPressedEvent>(e, OnKeyPressed);
+    }
 
+    bool Application::OnKeyPressed(KeyPressedEvent& e)
+    {
+        std::stringstream ss;
+        ss << "Key Pressed: ";
+        ss << static_cast<KeyPressedEvent>(e).GetKey();
+        Application::Get()->GetLogger().Info(ss.str().c_str());
     }
 }

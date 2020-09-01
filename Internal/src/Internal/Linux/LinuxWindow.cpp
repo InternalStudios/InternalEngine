@@ -5,6 +5,10 @@
 */
 
 #include "LinuxWindow.h"
+#include "Internal/Events/KeyboardEvent.h"
+#include "Internal/Events/WindowEvent.h"
+#include "Internal/Events/EventHandler.h"
+
 
 namespace Internal
 {
@@ -30,15 +34,22 @@ namespace Internal
         m_Window = XCreateWindow(m_Display, m_Root, 0, 0, m_Data.width, m_Data.height, 0, m_Depth, InputOutput, m_Visual, CWColormap | CWEventMask, &m_SWA);
         XMapWindow(m_Display, m_Window);
         XStoreName(m_Display, m_Window, m_Data.Title);
+        XInitThreads();
     }
 
     void LinuxWindow::OnUpdate()
     {
-        XNextEvent(m_Display, &m_Event);
-        if(m_Event.type == Expose)
+        if(XPending(m_Display))
         {
-            XGetWindowAttributes(m_Display, m_Window, &m_XWA);
+            XNextEvent(m_Display, &m_Event);
+            if(m_Event.type == Expose)
+            {
             
+            } else if(m_Event.type == KeyPress)
+            {
+                KeyPressedEvent e(m_Event.xkey.keycode, false);
+                EventHandler::PushEvent(e);
+            }
         }
     }
 

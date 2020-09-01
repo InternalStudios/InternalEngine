@@ -5,6 +5,7 @@
 */
 
 #include "EventHandler.h"
+#include "Internal/Core/Application.h"
 
 namespace Internal
 {
@@ -20,6 +21,6 @@ namespace Internal
 
 	void EventHandler::PushEvent(Event& e)
 	{
-		
+        Application::Get()->OnEvent(e);
 	}
 }
