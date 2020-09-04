@@ -8,6 +8,7 @@
 
 #include "Internal/Renderer/GraphicsContext.h"
 #include "Internal/Core/Logger.h"
+#include "Internal/Events/Event.h"
 
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -44,11 +45,13 @@ namespace Internal
 		virtual void Init() override;
 		virtual void SwapBuffers() override;
 		virtual void Shutdown() override;
+		void OnEvent(Event& e);
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 	private:
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         std::vector<char> readFile(const std::string& filename);
         VkShaderModule createShaderModule(const std::vector<char>& code);
+        void recreateSwapChain();
 		VkInstance m_Instance;
 		static Logger s_Logger;
 		const std::vector<const char*> m_ValidationLayers = {
@@ -79,7 +82,14 @@ namespace Internal
 		VkCommandPool m_CommandPool;
 		std::vector<VkCommandBuffer> m_CommandBuffers;
 
-		VkSemaphore m_ImageAvailableSemaphore;
-		VkSemaphore m_RenderFinishedSemaphore;
+		std::vector<VkSemaphore> m_ImageAvailableSemaphores;
+		std::vector<VkSemaphore> m_RenderFinishedSemaphores;
+		std::vector<VkFence> m_InFlightFences;
+		std::vector<VkFence> m_ImagesInFlight;
+
+		size_t m_CurrentFrame = 0;
+
+		bool m_FramebufferResized = false;
+		const int m_MaxFramesInFlight = 2;
 	};
 }

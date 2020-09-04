@@ -35,6 +35,7 @@ namespace Internal
         virtual void setHeight(uint32_t height) = 0;
         uint32_t getWidth() {return m_Data.width;}
         uint32_t getHeight() {return m_Data.height;}
+        void getSize(uint32_t* width, uint32_t* height) {*width = m_Data.width; *height = m_Data.height;}
 
         bool getFocused() { return m_Data.IsFocused; }
 

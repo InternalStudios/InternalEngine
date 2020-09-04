@@ -20,7 +20,8 @@ namespace Internal
     {
     public:
         KeyPressedEvent(int keycode, bool repeat) : m_Keycode(keycode), m_Repeat(repeat) {};
-        virtual EventType GetType() { return KEY_PRESSED_EVENT; };
+        virtual EventType GetType() override { return KEY_PRESSED_EVENT; };
+        static EventType GetTypeS() { return KEY_PRESSED_EVENT; };
         int GetKey() { return m_Keycode; };
     private:
         int m_Keycode;
@@ -32,6 +33,8 @@ namespace Internal
     public:
         KeyReleasedEvent(int keycode) : m_Keycode(keycode) {};
         virtual EventType GetType() { return KEY_RELEASED_EVENT; };
+        static EventType GetTypeS() { return KEY_RELEASED_EVENT; };
+        int GetKey() { return m_Keycode; };
     private:
         int m_Keycode;
     };

@@ -245,7 +245,8 @@ project "Sandbox"
 			"mono-2.0",
 			"m",
 			"rt",
-			"pthread"
+			"pthread",
+			"xcb"
 		}
 
 

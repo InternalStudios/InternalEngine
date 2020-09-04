@@ -10,6 +10,8 @@ namespace Internal
 {
 	class Shader
 	{
-		
+	public:
+	private:
+
 	};
 }

@@ -5,60 +5,52 @@
 */
 
 #include "LinuxWindow.h"
-#include "Internal/Events/KeyboardEvent.h"
-#include "Internal/Events/WindowEvent.h"
-#include "Internal/Events/EventHandler.h"
+
 
 
 namespace Internal
 {
+
+    LinuxWindow* LinuxWindow::s_Instance = nullptr;
+
     LinuxWindow::LinuxWindow(const WindowData& data)
         : Window(data)
     {
-        m_Display = XOpenDisplay(NULL);
-        if(!m_Display)
-        {
+        s_Instance = this;
 
-        }
-
-
-        m_Root = DefaultRootWindow(m_Display);
-
-        m_Visual = DefaultVisual(m_Display, 0);
-        m_Depth = DefaultDepth(m_Display, 0);
-
-        m_CMap = XCreateColormap(m_Display, m_Root, m_Visual, AllocNone);
-        m_SWA.colormap = m_CMap;
-        m_SWA.event_mask = ExposureMask | KeyPressMask;
-
-        m_Window = XCreateWindow(m_Display, m_Root, 0, 0, m_Data.width, m_Data.height, 0, m_Depth, InputOutput, m_Visual, CWColormap | CWEventMask, &m_SWA);
-        XMapWindow(m_Display, m_Window);
-        XStoreName(m_Display, m_Window, m_Data.Title);
-        XInitThreads();
+        m_Connection = xcb_connect(NULL, NULL);
+        m_Screen = xcb_setup_roots_iterator(xcb_get_setup(m_Connection)).data;
+        m_Window = xcb_generate_id(m_Connection);
+        xcb_create_window(m_Connection, XCB_COPY_FROM_PARENT, m_Window, m_Screen->root, 0, 0, m_Data.width, m_Data.height, 10, XCB_WINDOW_CLASS_INPUT_OUTPUT, m_Screen->root_visual, 0, NULL);
+        xcb_map_window(m_Connection, m_Window);
+        xcb_flush(m_Connection);
+        uint32_t masks = XCB_CW_EVENT_MASK;
+        uint32_t events = XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_RESIZE_REDIRECT;
     }
+
 
     void LinuxWindow::OnUpdate()
     {
-        if(XPending(m_Display))
+        xcb_generic_event_t* e;
+        while((e = xcb_poll_for_event(m_Connection)))
         {
-            XNextEvent(m_Display, &m_Event);
-            if(m_Event.type == Expose)
-            {
-            
-            } else if(m_Event.type == KeyPress)
-            {
-                KeyPressedEvent e(m_Event.xkey.keycode, false);
-                EventHandler::PushEvent(e);
+            switch (e->response_type & ~0x80) {
+                case XCB_RESIZE_REQUEST:
+                {
+                    WindowResizeEvent re(((xcb_resize_request_event_t*)e)->width, ((xcb_resize_request_event_t*)e)->height);
+                    EventHandler::PushEvent(re);
+                }
             }
         }
     }
 
     LinuxWindow::~LinuxWindow()
     {
+        xcb_disconnect(m_Connection);
     }
 
     void LinuxWindow::CreateSurface(VkInstance &instance, VkSurfaceKHR *surface)
     {
-        m_Surface.Init(m_Window, m_Display, instance, surface);
+        m_Surface.Init(m_Connection, m_Window, instance, surface);
     }
 }

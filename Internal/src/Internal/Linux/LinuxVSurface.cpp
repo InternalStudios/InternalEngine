@@ -6,13 +6,14 @@
 
 namespace Internal
 {
-    void LinuxVSurface::Init(::Window window, ::Display* display, VkInstance& instance, VkSurfaceKHR* surface)
+    void LinuxVSurface::Init(xcb_connection_t* connection, xcb_window_t window, VkInstance& instance, VkSurfaceKHR* surface)
     {
-        VkXlibSurfaceCreateInfoKHR createInfo {};
-        createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-        createInfo.dpy = display;
+        VkXcbSurfaceCreateInfoKHR createInfo {};
+        createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+        createInfo.connection = connection;
         createInfo.window = window;
-        if(vkCreateXlibSurfaceKHR(instance, &createInfo, nullptr, surface) != VK_SUCCESS)
+
+        if(vkCreateXcbSurfaceKHR(instance, &createInfo, nullptr, surface))
         {
 
         }

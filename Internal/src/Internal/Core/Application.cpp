@@ -14,6 +14,8 @@
 #include <sstream>
 #include <iostream>
 #include <time.h>
+#include <functional>
+#include "Maths.h"
 
 namespace Internal
 {
@@ -30,22 +32,22 @@ namespace Internal
         }
         if(false)
         {
-        auto result = discord::Core::Create(705604900792565821, DiscordCreateFlags_NoRequireDiscord, &m_Discord);
+        /*auto result = discord::Core::Create(705604900792565821, DiscordCreateFlags_NoRequireDiscord, &m_Discord);
         discord::Activity activity {};
         activity.SetDetails("Testing");
         activity.SetState("Testing");
         activity.GetAssets().SetLargeImage("ielogo");
         activity.GetTimestamps().SetStart(time(NULL));
-        m_Discord->ActivityManager().UpdateActivity(activity, [](discord::Result result){});
+        m_Discord->ActivityManager().UpdateActivity(activity, [](discord::Result result){});*/
         }
 
     }
 
     void Application::Run()
     {
-        while (1)
+        while(!Window::ShouldClose())
         {
-            m_Logger.Info("Update");
+            //m_Logger.Info("Update");
             m_Window->OnUpdate();
             m_VContext.SwapBuffers();
             //m_Discord->RunCallbacks();
@@ -60,7 +62,9 @@ namespace Internal
     void Application::OnEvent(Event& e)
     {
         EventHandler h;
-        h.Dispatch<KeyPressedEvent>(e, OnKeyPressed);
+        h.Dispatch<KeyPressedEvent>(e, std::bind(OnKeyPressed, std::placeholders::_1));
+        h.Dispatch<KeyReleasedEvent>(e, std::bind(OnKeyReleased, std::placeholders::_1));
+        m_VContext.OnEvent(e);
     }
 
     bool Application::OnKeyPressed(KeyPressedEvent& e)
@@ -69,5 +73,15 @@ namespace Internal
         ss << "Key Pressed: ";
         ss << static_cast<KeyPressedEvent>(e).GetKey();
         Application::Get()->GetLogger().Info(ss.str().c_str());
+        return true;
+    }
+
+    bool Application::OnKeyReleased(KeyReleasedEvent& e)
+    {
+        std::stringstream ss;
+        ss << "Key Released: ";
+        ss << static_cast<KeyReleasedEvent>(e).GetKey();
+        Application::Get()->GetLogger().Info(ss.str().c_str());
+        return true;
     }
 }
