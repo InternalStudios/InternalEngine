@@ -9,6 +9,7 @@
 #include "Internal/Core/Layer.h"
 #include "Internal/Events/Event.h"
 #include <chrono>
+#include <imgui.h>
 
 namespace Internal
 {
@@ -24,7 +25,7 @@ namespace Internal
         virtual void OnUpdate() override;
         virtual void OnEvent(Event& e) override;
     private:
-        float m_Time = 0.0f;
+        double m_Time = 0.0;
         std::chrono::time_point<std::chrono::high_resolution_clock> m_TimePoint;
     };
 }

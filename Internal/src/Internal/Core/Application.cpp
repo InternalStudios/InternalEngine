@@ -66,27 +66,9 @@ namespace Internal
 
     void Application::OnEvent(Event& e)
     {
-        EventHandler h;
-        h.Dispatch<KeyPressedEvent>(e, std::bind(OnKeyPressed, std::placeholders::_1));
-        h.Dispatch<KeyReleasedEvent>(e, std::bind(OnKeyReleased, std::placeholders::_1));
-        m_VContext.OnEvent(e);
-    }
-
-    bool Application::OnKeyPressed(KeyPressedEvent& e)
-    {
-        std::stringstream ss;
-        ss << "Key Pressed: ";
-        ss << static_cast<KeyPressedEvent>(e).GetKey();
-        Application::Get()->GetLogger().Info(ss.str().c_str());
-        return true;
-    }
-
-    bool Application::OnKeyReleased(KeyReleasedEvent& e)
-    {
-        std::stringstream ss;
-        ss << "Key Released: ";
-        ss << static_cast<KeyReleasedEvent>(e).GetKey();
-        Application::Get()->GetLogger().Info(ss.str().c_str());
-        return true;
+        for(auto& layer : m_LayerStack)
+        {
+            layer->OnEvent(e);
+        }
     }
 }

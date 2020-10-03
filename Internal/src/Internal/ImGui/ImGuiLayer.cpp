@@ -7,17 +7,18 @@
 #include "ImGuiLayer.h"
 
 #include "Internal/Vulkan/VulkanImGuiRenderer.h"
-#include <imgui.h>
 #include <time.h>
 #include "Internal/Core/Keycodes.h"
 #include "Internal/Core/Application.h"
 #include <iostream>
-
+#include "Internal/Events/EventHandler.h"
+#include "Internal/Events/KeyboardEvent.h"
+#include "Internal/Events/MouseEvent.h"
 
 namespace Internal
 {
     ImGuiLayer::ImGuiLayer()
-        : Layer("ImGuiLayer")
+            : Layer("ImGuiLayer")
     {
 
     }
@@ -77,11 +78,11 @@ namespace Internal
         io.DisplaySize = ImVec2(Application::Get()->GetWindow()->getWidth(), Application::Get()->GetWindow()->getHeight());
 
         auto now = std::chrono::high_resolution_clock::now();
-        m_Time = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_TimePoint).count();
+        m_Time = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_TimePoint).count() / 1000.0f;
         m_TimePoint = now;
         std::cout << m_Time <<std::endl;
 
-        io.DeltaTime = m_Time;
+        io.DeltaTime = 0.16;
 
         ImGui_ImplVulkan_NewFrame();
         ImGui::NewFrame();
@@ -94,7 +95,12 @@ namespace Internal
 
     void ImGuiLayer::OnEvent(Event &e)
     {
-
+        EventHandler h;
+        h.Dispatch<MouseMovedEvent>(e, [](MouseMovedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MousePos = ImVec2(me.GetX(), me.GetY()); return true;});
+        h.Dispatch<MouseButtonPressedEvent>(e, [](MouseButtonPressedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[0] = true; std::cout << "Mouse button pressed" << std::endl; return true;});
+        h.Dispatch<MouseButtonReleasedEvent>(e, [](MouseButtonReleasedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[0] = false; return true;});
+        h.Dispatch<KeyPressedEvent>(e, [](KeyPressedEvent& ke) {ImGuiIO& io = ImGui::GetIO();io.KeysDown[ke.GetKey()] = true; return true;});
+        h.Dispatch<KeyReleasedEvent>(e, [](KeyReleasedEvent& ke) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[ke.GetKey()] = false; return true;});
     }
 
 

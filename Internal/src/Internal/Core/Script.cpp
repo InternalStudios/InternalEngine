@@ -5,17 +5,6 @@
 namespace Internal
 {
 
-	struct color_t {
-		uint8_t r,g,b;
-		color_t(uint32_t rgb)
-			: r((rgb >> 16) & 0xff)
-			, g((rgb >> 8) & 0xff)
-			, b(rgb & 0xff)
-		{}
-		color_t(uint8_t r, uint8_t g, uint8_t b)
-			: r(r), g(g), b(b) {}
-	};
-
 	void Print(MonoString* string);
 
 	Script::Script(const char* className, const char* location)

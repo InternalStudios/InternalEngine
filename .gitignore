@@ -17,3 +17,5 @@ Makefile
 *.vcxproj.user
 
 .idea/
+
+Internal/libs/vulkan/
