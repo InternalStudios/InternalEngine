@@ -1,2 +1,0 @@
-/usr/bin/ar qc libvsamputils.a  CMakeFiles/vsamputils.dir/util.cpp.o CMakeFiles/vsamputils.dir/util_init.cpp.o
-/usr/bin/ranlib libvsamputils.a

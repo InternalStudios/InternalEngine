@@ -10,7 +10,6 @@
 
 #include "Internal/Core/Window.h"
 #include "Internal/Core/Application.h"
-#include "glad/glad.h"
 
 int main(int argc, char* argv[])
 {

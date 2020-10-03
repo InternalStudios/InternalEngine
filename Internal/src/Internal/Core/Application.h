@@ -7,11 +7,13 @@
 #pragma once
 
 #include "Window.h"
-//#include "discord.h"
+#include "discord.h"
 #include "Internal/Vulkan/VulkanContext.h"
 #include "Internal/Events/Event.h"
 #include "Internal/Events/KeyboardEvent.h"
 #include "Logger.h"
+#include "Internal/ImGui/ImGuiLayer.h"
+#include "Internal/Core/Layer.h"
 
 namespace Internal
 {
@@ -41,8 +43,10 @@ namespace Internal
     private:
         static Application* s_Instance;
         Window* m_Window;
-        //discord::Core* m_Discord {};
+        discord::Core* m_Discord {};
         VulkanContext m_VContext;
         Logger m_Logger;
+        LayerStack m_LayerStack;
+        friend class ImGuiLayer;
     };
 }

@@ -3,6 +3,7 @@
 //
 
 #include "WindowsVSurface.h"
+#include <vulkan/vulkan_win32.h>
 
 namespace Internal
 {

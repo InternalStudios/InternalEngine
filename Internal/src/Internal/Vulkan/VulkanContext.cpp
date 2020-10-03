@@ -11,6 +11,8 @@
 
 #include "VulkanContext.h"
 
+#include "VulkanImGuiRenderer.h"
+
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -136,7 +138,7 @@ namespace Internal
 	{
 		for(const auto& mode : availableModes)
 		{
-			if(mode == VK_PRESENT_MODE_MAILBOX_KHR)
+			if(mode == VK_PRESENT_MODE_FIFO_KHR)
 			{
 				return mode;
 			}
@@ -407,6 +409,31 @@ namespace Internal
         vkGetDeviceQueue(m_LogicalDevice, inds.graphicsFamily.value(), 0, &m_GraphicsQueue);
         vkGetDeviceQueue(m_LogicalDevice, inds.presentFamily.value(), 0, &m_PresentQueue);
 
+        VkDescriptorPoolSize pool_sizes[] =
+        {
+            { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+        };
+        VkDescriptorPoolCreateInfo pool_info = {};
+        pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
+        pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+        pool_info.pPoolSizes = pool_sizes;
+        if(vkCreateDescriptorPool(m_LogicalDevice, &pool_info, nullptr, &m_DescriptorPool) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to create descriptor pool");
+        }
+
 		SwapChainSupportDetails swapChainSupport = querySwapChainSupport(m_PhysicalDevice);
 		VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = choosePresentMode(swapChainSupport.presentModes);
@@ -524,6 +551,8 @@ namespace Internal
         {
             s_Logger.Error("Failed to create render pass");
         }
+
+        VulkanImGui::Init(m_DescriptorPool, m_LogicalDevice, m_PhysicalDevice, m_Instance, m_SwapChainImages.size(), m_SwapChainImages.size(), m_GraphicsQueue, findQueueFamilies(m_PhysicalDevice, m_Surface).graphicsFamily.value(), m_RenderPass);
 
         auto vertShaderCode = readFile("assets/shaders/vertex/vertex.spv");
         auto fragShaderCode = readFile("assets/shaders/fragment/fragment.spv");
@@ -692,38 +721,6 @@ namespace Internal
             s_Logger.Error("Failed to allocate command buffers");
         }
 
-        for(size_t i = 0; i < m_CommandBuffers.size(); i++)
-        {
-            VkCommandBufferBeginInfo beginInfo {};
-            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-            if(vkBeginCommandBuffer(m_CommandBuffers[i], &beginInfo) != VK_SUCCESS)
-            {
-                s_Logger.Error("Failed to begin recording command buffer");
-            }
-
-            VkRenderPassBeginInfo renderPassBeginInfo {};
-            renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            renderPassBeginInfo.renderPass = m_RenderPass;
-            renderPassBeginInfo.framebuffer = m_SwapChainFramebuffers[i];
-            renderPassBeginInfo.renderArea.offset = {0, 0};
-            renderPassBeginInfo.renderArea.extent = m_SwapChainExtent;
-
-            VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
-            renderPassBeginInfo.clearValueCount = 1;
-            renderPassBeginInfo.pClearValues = &clearColor;
-
-            vkCmdBeginRenderPass(m_CommandBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(m_CommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
-            vkCmdDraw(m_CommandBuffers[i], 3, 1, 0, 0);
-
-            vkCmdEndRenderPass(m_CommandBuffers[i]);
-            if(vkEndCommandBuffer(m_CommandBuffers[i]) != VK_SUCCESS)
-            {
-                s_Logger.Error("Failed to record command buffer");
-            }
-        }
-
         m_ImageAvailableSemaphores.resize(m_MaxFramesInFlight);
         m_RenderFinishedSemaphores.resize(m_MaxFramesInFlight);
         m_InFlightFences.resize(m_MaxFramesInFlight);
@@ -745,13 +742,38 @@ namespace Internal
 
         }
 
+        VkCommandBufferAllocateInfo aInfo{};
+        aInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        aInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        aInfo.commandPool = m_CommandPool;
+        aInfo.commandBufferCount = 1;
+
+        VkCommandBuffer commandBuffer;
+        vkAllocateCommandBuffers(m_LogicalDevice, &aInfo, &commandBuffer);
+
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+        ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+        vkEndCommandBuffer(commandBuffer);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+
+        vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(m_GraphicsQueue);
+
+        vkFreeCommandBuffers(m_LogicalDevice, m_CommandPool, 1, &commandBuffer);
 	}
 
 	void VulkanContext::SwapBuffers()
 	{
 	    vkWaitForFences(m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
 
-        uint32_t imageIndex;
         VkResult result = vkAcquireNextImageKHR(m_LogicalDevice, m_SwapChain, UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex);
         if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
         {
@@ -769,6 +791,31 @@ namespace Internal
         }
 
         m_ImagesInFlight[imageIndex] = m_InFlightFences[m_CurrentFrame];
+
+        VkCommandBufferBeginInfo beginInfo {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        if(vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to begin recording command buffer");
+        }
+        VkRenderPassBeginInfo renderPassBeginInfo {};
+        renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassBeginInfo.renderPass = m_RenderPass;
+        renderPassBeginInfo.framebuffer = m_SwapChainFramebuffers[imageIndex];
+        renderPassBeginInfo.renderArea.offset = {0, 0};
+        renderPassBeginInfo.renderArea.extent = m_SwapChainExtent;
+        VkClearValue clearColor = {1.0f, 0.0f, 1.0f, 1.0f};
+        renderPassBeginInfo.clearValueCount = 1;
+        renderPassBeginInfo.pClearValues = &clearColor;
+        vkCmdBeginRenderPass(m_CommandBuffers[imageIndex], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline(m_CommandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
+        vkCmdDraw(m_CommandBuffers[imageIndex], 3, 1, 0, 0);
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffers[imageIndex]);
+        vkCmdEndRenderPass(m_CommandBuffers[imageIndex]);
+        if(vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to record command buffer");
+        }
 
         VkSubmitInfo submitInfo {};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -810,7 +857,8 @@ namespace Internal
 	void VulkanContext::Shutdown()
 	{
 	    vkDeviceWaitIdle(m_LogicalDevice);
-	    for(size_t i = 0; i < m_MaxFramesInFlight; i++)
+        vkDestroyDescriptorPool(m_LogicalDevice, m_DescriptorPool, nullptr);
+        for(size_t i = 0; i < m_MaxFramesInFlight; i++)
         {
 	        vkDestroySemaphore(m_LogicalDevice, m_ImageAvailableSemaphores[i], nullptr);
     	    vkDestroySemaphore(m_LogicalDevice, m_RenderFinishedSemaphores[i], nullptr);
@@ -1150,45 +1198,14 @@ namespace Internal
         {
             s_Logger.Error("Failed to allocate command buffers");
         }
-
-        for(size_t i = 0; i < m_CommandBuffers.size(); i++)
-        {
-            VkCommandBufferBeginInfo beginInfo {};
-            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-            if(vkBeginCommandBuffer(m_CommandBuffers[i], &beginInfo) != VK_SUCCESS)
-            {
-                s_Logger.Error("Failed to begin recording command buffer");
-            }
-
-            VkRenderPassBeginInfo renderPassBeginInfo {};
-            renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            renderPassBeginInfo.renderPass = m_RenderPass;
-            renderPassBeginInfo.framebuffer = m_SwapChainFramebuffers[i];
-            renderPassBeginInfo.renderArea.offset = {0, 0};
-            renderPassBeginInfo.renderArea.extent = m_SwapChainExtent;
-
-            VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
-            renderPassBeginInfo.clearValueCount = 1;
-            renderPassBeginInfo.pClearValues = &clearColor;
-
-            vkCmdBeginRenderPass(m_CommandBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-            vkCmdBindPipeline(m_CommandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
-            vkCmdDraw(m_CommandBuffers[i], 3, 1, 0, 0);
-
-            vkCmdEndRenderPass(m_CommandBuffers[i]);
-            if(vkEndCommandBuffer(m_CommandBuffers[i]) != VK_SUCCESS)
-            {
-                s_Logger.Error("Failed to record command buffer");
-            }
-        }
 	}
 
 	void VulkanContext::OnEvent(Event& e)
 	{
-        if(e.GetType() == WINDOW_RESIZE_EVENT)
+        if(e.GetType() == EventType::WINDOW_RESIZE_EVENT)
         {
         }
 	}
+
 
 }

@@ -11,7 +11,7 @@
 
 namespace Internal
 {
-    int VulkanShader::Shader(std::string &vertexShader, std::string &fragmentShader)
+    VulkanShader::VulkanShader(std::string &vertexShader, std::string &fragmentShader)
     {
 
     }

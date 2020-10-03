@@ -10,7 +10,8 @@
 
 #include "Internal/Core/Window.h"
 #include "Internal/Vulkan/VulkanContext.h"
-
+#include "WindowsVSurface.h"
+#include <vulkan/vulkan.h>
 
 namespace Internal
 {
@@ -27,9 +28,10 @@ namespace Internal
 
         virtual void OnEvent() override;
         virtual void OnTick() override;
+        virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface) override;
     private:
         HWND m_HWND;
         HDC m_HDC;
-        VulkanContext m_VContext;
+        WindowsVSurface m_Surface;
     };
 }

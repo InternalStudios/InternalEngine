@@ -13,7 +13,7 @@ namespace Internal
     class VulkanShader : public Shader
     {
     public:
-        Shader(std::string& vertexShader, std::string& fragmentShader);
+        VulkanShader(std::string& vertexShader, std::string& fragmentShader);
     private:
 
     };

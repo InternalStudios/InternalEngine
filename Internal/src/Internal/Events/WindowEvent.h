@@ -12,8 +12,8 @@ namespace Internal
 	{
 	public:
 		WindowResizeEvent(int width, int height) : m_Width(width), m_Height(height) {};
-		virtual EventType GetType() {return WINDOW_RESIZE_EVENT;}
-		static EventType GetTypeS() {return WINDOW_RESIZE_EVENT;}
+		virtual EventType GetType() {return EventType::WINDOW_RESIZE_EVENT;}
+		static EventType GetTypeS() {return EventType::WINDOW_RESIZE_EVENT;}
 	private:
 		int m_Width, m_Height;
 	};

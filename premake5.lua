@@ -13,11 +13,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
-IncludeDir["Glad"] = "Internal/libs/glad/include"
 IncludeDir["discord"] = "Internal/libs/discord/cpp"
+IncludeDir["ImGui"] = "Internal/libs/imgui"
 
-include "Internal/libs/glad"
-include "Internal/libs/discord"
+include "Internal/libs/imgui"
 
 project "InternalEngine"
 	location "Internal"
@@ -40,11 +39,13 @@ project "InternalEngine"
 		"Internal/src/Internal/OpenGL/**.h",
 		"Internal/src/Internal/Renderer/**.h",
 		"Internal/src/Internal/Types/**.h",
+		"Internal/src/Internal/ImGui/**.h",
 		"Internal/src/Internal/Core/**.cpp",
 		"Internal/src/Internal/Events/**.cpp",
 		"Internal/src/Internal/OpenGL/**.cpp",
 		"Internal/src/Internal/Renderer/**.cpp",
 		"Internal/src/Internal/Types/**.cpp",
+		"Internal/src/Internal/ImGui/**.cpp",
 		"Internal/src/Internal/Vulkan/**.cpp",
 		"Internal/src/Internal/Vulkan/**.h"
 	}
@@ -52,14 +53,15 @@ project "InternalEngine"
 	includedirs
 	{
         "Internal/src",
-		"%{IncludeDir.Glad}",
-		"%{IncludeDir.discord}"
+		"%{IncludeDir.discord}",
+		"%{IncludeDir.ImGui}"
 
 	}
 
 	links
 	{
-	    "discord_game_sdk"
+	    "discord_game_sdk",
+	    "ImGui"
 	}
 
 	filter "system:windows"
@@ -83,7 +85,8 @@ project "InternalEngine"
 
 		includedirs
 		{
-			"Internal/libs/vulkan/Windows/Include"
+			"Internal/libs/vulkan/Windows/Include",
+			"C:/Program Files/Mono/include/mono-2.0"
 		}
 
 		libdirs
@@ -182,8 +185,8 @@ project "Sandbox"
 	includedirs
 	{
 		"Internal/src",
-		"%{IncludeDir.Glad}",
-		"%{IncludeDir.discord}"
+		"%{IncludeDir.discord}",
+		"%{IncludeDir.ImGui}"
 	}
 
 	libdirs
@@ -194,9 +197,8 @@ project "Sandbox"
 	links
 	{
         "InternalEngine",
-		"Glad",
-		"discord_game_sdk",
-		"discord"
+		"discord_game_sdk.dll",
+		"ImGui"
 	}
 
 	filter "system:windows"
@@ -205,6 +207,12 @@ project "Sandbox"
 
 		defines
 		{
+		}
+
+		includedirs
+		{
+			"C:/Program Files/Mono/include/mono-2.0",
+			"Internal/libs/vulkan/Windows/Include"
 		}
 		
 		links

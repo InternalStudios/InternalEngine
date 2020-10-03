@@ -3,9 +3,6 @@
 #include <string>
 
 #include "Internal/Core/Application.h"
-
-
-
 #include "Internal/Renderer/GraphicsContext.h"
 
 #include <iostream>
@@ -60,18 +57,11 @@ namespace Internal
 
 
 		SetPixelFormat(m_HDC, format, &pfd);
-		if(GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)
-		
-			m_VContext.Init();
-		}
+
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
-		if (GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)
-		{
-			m_VContext.Shutdown();
-		}
 		ReleaseDC(m_HWND, m_HDC);
 		DestroyWindow(m_HWND);
 	}
@@ -125,5 +115,10 @@ namespace Internal
 	}
 	void WindowsWindow::OnTick()
 	{
+	}
+
+	void WindowsWindow::CreateSurface(VkInstance& instance, VkSurfaceKHR* surface)
+	{
+		m_Surface.Init(m_HWND, GetModuleHandle(0), instance, surface);
 	}
 }

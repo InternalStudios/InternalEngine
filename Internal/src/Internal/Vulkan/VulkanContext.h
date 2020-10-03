@@ -9,6 +9,7 @@
 #include "Internal/Renderer/GraphicsContext.h"
 #include "Internal/Core/Logger.h"
 #include "Internal/Events/Event.h"
+#include "VulkanImGui.h"
 
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -51,6 +52,7 @@ namespace Internal
 		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
         std::vector<char> readFile(const std::string& filename);
         VkShaderModule createShaderModule(const std::vector<char>& code);
+		static void CheckVkResult(VkResult err) {if(err != VK_SUCCESS) s_Logger.Error("Failed error check");}
         void recreateSwapChain();
 		VkInstance m_Instance;
 		static Logger s_Logger;
@@ -91,5 +93,8 @@ namespace Internal
 
 		bool m_FramebufferResized = false;
 		const int m_MaxFramesInFlight = 2;
+        uint32_t imageIndex;
+
+		VkDescriptorPool m_DescriptorPool;
 	};
 }

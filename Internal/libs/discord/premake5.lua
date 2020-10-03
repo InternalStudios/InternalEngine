@@ -14,6 +14,16 @@ project "Discord"
 		"cpp"
 	}
 
+	libdirs
+	{
+		"lib/x86_64"
+	}
+
+	links
+	{
+		"discord_game_sdk.dll"
+	}
+
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
