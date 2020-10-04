@@ -49,8 +49,17 @@ namespace Internal
                 delete m_RefCount;
             }
         }
+
+        T* operator->() {return m_Pointer;}
     private:
-        int32_t* m_RefCount;
+        uint32_t* m_RefCount;
         T* m_Pointer;
     };
+
+    template<typename T, typename... Args>
+    SharedPointer<T> createSharedPointer(Args&&... args)
+    {
+        return SharedPointer<Args...>(args...);
+    }
+
 }

@@ -17,6 +17,30 @@
 
 namespace Internal
 {
+    bool IsModKey(int keycode)
+    {
+        if(keycode >=340 && keycode <= 347)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool IsCharacterKey(int keycode)
+    {
+        if(keycode >= 32 && keycode <= 96)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     ImGuiLayer::ImGuiLayer()
             : Layer("ImGuiLayer")
     {
@@ -97,10 +121,55 @@ namespace Internal
     {
         EventHandler h;
         h.Dispatch<MouseMovedEvent>(e, [](MouseMovedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MousePos = ImVec2(me.GetX(), me.GetY()); return true;});
-        h.Dispatch<MouseButtonPressedEvent>(e, [](MouseButtonPressedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[0] = true; std::cout << "Mouse button pressed" << std::endl; return true;});
-        h.Dispatch<MouseButtonReleasedEvent>(e, [](MouseButtonReleasedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[0] = false; return true;});
-        h.Dispatch<KeyPressedEvent>(e, [](KeyPressedEvent& ke) {ImGuiIO& io = ImGui::GetIO();io.KeysDown[ke.GetKey()] = true; return true;});
-        h.Dispatch<KeyReleasedEvent>(e, [](KeyReleasedEvent& ke) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[ke.GetKey()] = false; return true;});
+        h.Dispatch<MouseButtonPressedEvent>(e, [](MouseButtonPressedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[me.GetButton()] = true; std::cout << "Mouse button pressed" << std::endl; return true;});
+        h.Dispatch<MouseButtonReleasedEvent>(e, [](MouseButtonReleasedEvent& me) {ImGuiIO& io = ImGui::GetIO();io.MouseDown[me.GetButton()] = false; return true;});
+        h.Dispatch<KeyPressedEvent>(e, [](KeyPressedEvent& ke)
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            io.KeysDown[ke.GetKey()] = true;
+            if(IsCharacterKey(ke.GetKey()))
+            {
+                io.AddInputCharacter(ke.GetKey());
+            }
+            if(IsModKey(ke.GetKey()))
+            {
+                switch(ke.GetKey())
+                {
+                    case INTERNAL_KEY_LEFT_CONTROL: io.KeyCtrl = true;
+                    case INTERNAL_KEY_RIGHT_CONTROL: io.KeyCtrl = true;
+                    case INTERNAL_KEY_LEFT_SHIFT: io.KeyShift = true;
+                    case INTERNAL_KEY_RIGHT_SHIFT: io.KeyShift = true;
+                    case INTERNAL_KEY_LEFT_ALT: io.KeyAlt = true;
+                    case INTERNAL_KEY_RIGHT_ALT: io.KeyAlt = true;
+                    case INTERNAL_KEY_LEFT_SUPER: io.KeySuper = true;
+                    case INTERNAL_KEY_RIGHT_SUPER: io.KeySuper = true;
+                    default: break;
+
+                }
+            }
+            return true;
+        });
+        h.Dispatch<KeyReleasedEvent>(e, [](KeyReleasedEvent& ke)
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            io.KeysDown[ke.GetKey()] = false;
+            if(IsModKey(ke.GetKey()))
+            {
+                switch(ke.GetKey())
+                {
+                    case INTERNAL_KEY_LEFT_CONTROL: io.KeyCtrl = false;
+                    case INTERNAL_KEY_RIGHT_CONTROL: io.KeyCtrl = false;
+                    case INTERNAL_KEY_LEFT_SHIFT: io.KeyShift = false;
+                    case INTERNAL_KEY_RIGHT_SHIFT: io.KeyShift = false;
+                    case INTERNAL_KEY_LEFT_ALT: io.KeyAlt = false;
+                    case INTERNAL_KEY_RIGHT_ALT: io.KeyAlt = false;
+                    case INTERNAL_KEY_LEFT_SUPER: io.KeySuper = false;
+                    case INTERNAL_KEY_RIGHT_SUPER: io.KeySuper = false;
+                    default: break;
+                }
+            }
+            return true;
+        });
     }
 
 

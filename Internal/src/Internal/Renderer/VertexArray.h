@@ -9,7 +9,7 @@ namespace Internal
 	{
 	public:
 	private:
-		Pointer<VertexBuffer> m_VertexBuffer;
-		Pointer<IndexBuffer> m_IndexBuffer;
+		SharedPointer<VertexBuffer> m_VertexBuffer;
+		SharedPointer<IndexBuffer> m_IndexBuffer;
 	};
 }

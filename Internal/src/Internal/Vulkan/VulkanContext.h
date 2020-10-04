@@ -47,9 +47,11 @@ namespace Internal
 		virtual void SwapBuffers() override;
 		virtual void Shutdown() override;
 		void OnEvent(Event& e);
+        static const VkDevice& GetDevice();
+        static const VkPhysicalDevice& GetPhysicalDevice();
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 	private:
-		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+		SwapChainSupportDetails querySwapChainSupport(const VkPhysicalDevice& device);
         std::vector<char> readFile(const std::string& filename);
         VkShaderModule createShaderModule(const std::vector<char>& code);
 		static void CheckVkResult(VkResult err) {if(err != VK_SUCCESS) s_Logger.Error("Failed error check");}
@@ -67,6 +69,8 @@ namespace Internal
 		VkSurfaceKHR m_Surface;
 		VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
 		VkDevice m_LogicalDevice;
+        static VkDevice s_Device;
+        static VkPhysicalDevice s_PhysicalDevice;
 		VkQueue m_GraphicsQueue;
 		VkQueue m_PresentQueue;
 

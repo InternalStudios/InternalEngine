@@ -16,6 +16,7 @@
 #include <time.h>
 #include <functional>
 #include "Maths.h"
+#include "Internal/Renderer/Renderer.h"
 
 namespace Internal
 {
@@ -26,6 +27,7 @@ namespace Internal
     {
         s_Instance = this;
         m_Window = Window::CreateWindow(data.m_WindowData);
+        Renderer::Init();
         m_LayerStack.PushOverlay(new ImGuiLayer());
         if (GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)
         {

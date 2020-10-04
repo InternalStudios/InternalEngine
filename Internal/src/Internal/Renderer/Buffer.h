@@ -8,6 +8,7 @@
 
 #include <inttypes.h>
 #include <vector>
+#include "Internal/Types/Pointers.h"
 
 namespace Internal
 {
@@ -40,6 +41,7 @@ namespace Internal
 
 	struct BufferElement
 	{
+	public:
 		const char* Name;
 		ShaderDataType Type;
 		uint32_t Size;
@@ -79,7 +81,6 @@ namespace Internal
 	class BufferLayout
 	{
 	public:
-
 		BufferLayout() {}
 
 		BufferLayout(const std::initializer_list<BufferElement>& elements)
@@ -110,7 +111,6 @@ namespace Internal
 		}
 	private:
 		std::vector<BufferElement> m_Elements;
-
 		uint32_t m_Stride = 0;
 	};
 	
@@ -125,8 +125,8 @@ namespace Internal
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer* Create(uint32_t size);
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static SharedPointer<VertexBuffer> Create(uint32_t size);
+		static SharedPointer<VertexBuffer> Create(float* vertices, uint32_t size);
 	private:
 	};
 
@@ -140,7 +140,7 @@ namespace Internal
 
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static SharedPointer<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	private:
 
 	};

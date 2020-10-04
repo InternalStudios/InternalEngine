@@ -6,7 +6,7 @@
 
 #include "Internal/Renderer/Shader.h"
 #include <string>
-
+#include <vulkan/vulkan.h>
 
 namespace Internal
 {
@@ -15,6 +15,7 @@ namespace Internal
     public:
         VulkanShader(std::string& vertexShader, std::string& fragmentShader);
     private:
-
+        VkShaderModule m_FragShader;
+        VkShaderModule m_VertShader;
     };
 }
