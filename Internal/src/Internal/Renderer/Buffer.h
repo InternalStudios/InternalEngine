@@ -119,12 +119,6 @@ namespace Internal
 	public:
 		virtual ~VertexBuffer() {}
 
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
-
-		virtual const BufferLayout& GetLayout() const = 0;
-		virtual void SetLayout(const BufferLayout& layout) = 0;
-
 		static SharedPointer<VertexBuffer> Create(uint32_t size);
 		static SharedPointer<VertexBuffer> Create(float* vertices, uint32_t size);
 	private:

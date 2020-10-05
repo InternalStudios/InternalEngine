@@ -4,9 +4,11 @@
 
 #include "VulkanGraphicsPipeline.h"
 
+#include "VulkanContext.h"
+
 namespace Internal
 {
-    VulkanGraphicsPipeline::VulkanGraphicsPipeline()
+    VulkanGraphicsPipeline::VulkanGraphicsPipeline(const VulkanShader& shader)
     {
         VkPipelineInputAssemblyStateCreateInfo inputAssembly {};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -74,16 +76,46 @@ namespace Internal
         VkPipelineLayoutCreateInfo pipelineLayoutInfo {};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 
-        if(vkCreatePipelineLayout(m_LogicalDevice, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
+        if(vkCreatePipelineLayout(VulkanContext::GetDevice(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS)
         {
             s_Logger.Error("Failed to create pipeline layout");
         }
 
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+
+        uint32_t offset = 0;
+        for(auto& element : shader.GetLayout())
+        {
+            VkVertexInputAttributeDescription description {};
+            description.binding = 0;
+            description.location = offset;
+            switch(element.Type)
+            {
+                case ShaderDataType::Float:		description.format = VK_FORMAT_R32_SFLOAT;
+                case ShaderDataType::Float2:	description.format = VK_FORMAT_R32G32_SFLOAT;
+                case ShaderDataType::Float3:	description.format = VK_FORMAT_R32G32B32_SFLOAT;
+                case ShaderDataType::Float4:	description.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+                case ShaderDataType::Int:		description.format = VK_FORMAT_R32_SINT;
+                case ShaderDataType::Int2:		description.format = VK_FORMAT_R32G32_SINT;
+                case ShaderDataType::Int3:		description.format = VK_FORMAT_R32G32B32_SINT;
+                case ShaderDataType::Int4:		description.format = VK_FORMAT_R32G32B32A32_SINT;
+            }
+            description.offset = element.Offset;
+            attributeDescriptions.push_back(description);
+        }
+
+        VkPipelineVertexInputStateCreateInfo vertexInputInfo {};
+        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.pVertexBindingDescriptions = &m_Description;
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(shader.GetLayout().GetElements().size());
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
         VkGraphicsPipelineCreateInfo pipelineInfo {};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = 2;
-        pipelineInfo.pStages = shaderStages;
-        pipelineInfo.pVertexInputState = VulkanVertexBuffer::GetBoundBuffer()->GetInfo();
+        pipelineInfo.pStages = shader.GetStages();
+        pipelineInfo.pVertexInputState = &vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &inputAssembly;
         pipelineInfo.pViewportState = &viewportState;
         pipelineInfo.pRasterizationState = &rasterizer;
@@ -95,12 +127,106 @@ namespace Internal
         pipelineInfo.renderPass = m_RenderPass;
         pipelineInfo.subpass = 0;
 
-        if(vkCreateGraphicsPipelines(m_LogicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
+        if(vkCreateGraphicsPipelines(VulkanContext::GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
         {
             s_Logger.Error("Failed to create pipeline");
         }
 
-        vkDestroyShaderModule(m_LogicalDevice, vertShaderModule, nullptr);
-        vkDestroyShaderModule(m_LogicalDevice, fragShaderModule, nullptr);
+        VkCommandPoolCreateInfo poolCreateInfo {};
+        poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolCreateInfo.queueFamilyIndex = findQueueFamilies(m_PhysicalDevice, m_Surface).graphicsFamily.value();
+        poolCreateInfo.flags = 0;
+
+        if(vkCreateCommandPool(m_LogicalDevice, &poolCreateInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to create Command Pool");
+        }
+
+        m_CommandBuffers.resize(m_SwapChainFramebuffers.size());
+
+        VkCommandBufferAllocateInfo allocInfo {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandPool = m_CommandPool;
+        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.commandBufferCount = (uint32_t)m_CommandBuffers.size();
+
+        if(vkAllocateCommandBuffers(m_LogicalDevice, &allocInfo, m_CommandBuffers.data()) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to allocate command buffers");
+        }
+    }
+
+    VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
+    {
+        vkDestroyPipeline(VulkanContext::GetDevice(), m_GraphicsPipeline, nullptr);
+        vkDestroyPipelineLayout(VulkanContext::GetDevice(), m_PipelineLayout, nullptr);
+    }
+
+    void VulkanGraphicsPipeline::Begin()
+    {
+        VkCommandBufferBeginInfo beginInfo {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        if(vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to begin recording command buffer");
+        }
+        VkRenderPassBeginInfo renderPassBeginInfo {};
+        renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassBeginInfo.renderPass = m_RenderPass;
+        renderPassBeginInfo.framebuffer = m_SwapChainFramebuffers[imageIndex];
+        renderPassBeginInfo.renderArea.offset = {0, 0};
+        renderPassBeginInfo.renderArea.extent = m_SwapChainExtent;
+        VkClearValue clearColor = {1.0f, 0.0f, 1.0f, 1.0f};
+        renderPassBeginInfo.clearValueCount = 1;
+        renderPassBeginInfo.pClearValues = &clearColor;
+        vkCmdBeginRenderPass(m_CommandBuffers[imageIndex], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline(m_CommandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
+    }
+
+    void VulkanGraphicsPipeline::QueueBuffer(const VulkanVertexBuffer& buffer, const VulkanIndexBuffer& indexBuffer)
+    {
+        vkCmdBindVertexBuffers(m_CommandBuffers[imageIndex], 0, 1, VulkanVertexBuffer::GetBoundBuffer()->GetBuffer(), 0);
+        vkCmdDraw(m_CommandBuffers[imageIndex], 3, 1, 0, 0);
+    }
+
+    void VulkanGraphicsPipeline::Submit()
+    {
+        vkCmdEndRenderPass(m_CommandBuffers[imageIndex]);
+        if(vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to record command buffer");
+        }
+
+        VkSubmitInfo submitInfo {};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+        VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame]};
+        VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = waitSemaphores;
+        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &m_CommandBuffers[imageIndex];
+        VkSemaphore signalSemaphores[] = {m_RenderFinishedSemaphores[m_CurrentFrame]};
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = signalSemaphores;
+
+        vkResetFences(m_LogicalDevice, 1, &m_InFlightFences[m_CurrentFrame]);
+
+        if(vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
+        {
+            s_Logger.Error("Failed to submit draw command buffer");
+        }
+
+        VkPresentInfoKHR presentInfo {};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = signalSemaphores;
+        VkSwapchainKHR swapChains[] = {m_SwapChain};
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = swapChains;
+        presentInfo.pImageIndices = &imageIndex;
+        presentInfo.pResults = nullptr;
+        vkQueuePresentKHR(m_PresentQueue, &presentInfo);
     }
 }

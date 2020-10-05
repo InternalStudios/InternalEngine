@@ -18,9 +18,6 @@ namespace Internal
                 {ShaderDataType::Float2, "inPosition"},
                 {ShaderDataType::Float3, "inColor"}
         };
-
-        s_Buffer.SetLayout(layout);
-        s_Buffer.Bind();
     }
 
     void Renderer::Draw()

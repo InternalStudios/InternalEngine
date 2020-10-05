@@ -53,9 +53,7 @@ namespace Internal
 	private:
 		SwapChainSupportDetails querySwapChainSupport(const VkPhysicalDevice& device);
         std::vector<char> readFile(const std::string& filename);
-        VkShaderModule createShaderModule(const std::vector<char>& code);
 		static void CheckVkResult(VkResult err) {if(err != VK_SUCCESS) s_Logger.Error("Failed error check");}
-        void recreateSwapChain();
 		VkInstance m_Instance;
 		static Logger s_Logger;
 		const std::vector<const char*> m_ValidationLayers = {
@@ -81,8 +79,6 @@ namespace Internal
 		std::vector<VkImageView> m_SwapChainImageViews;
 
 		VkRenderPass m_RenderPass;
-		VkPipelineLayout m_PipelineLayout;
-		VkPipeline m_GraphicsPipeline;
 		std::vector<VkFramebuffer> m_SwapChainFramebuffers;
 
 		VkCommandPool m_CommandPool;

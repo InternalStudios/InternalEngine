@@ -32,7 +32,7 @@ namespace Internal
         createInfo.codeSize = fragShaderCode.size();
         createInfo.pCode = reinterpret_cast<const uint32_t*>(fragShaderCode.data());
 
-        if(vkCreateShaderModule(VulkanContext::GetDevice(), &fragInfo, nullptr, &shaderModule) != VK_SUCCESS)
+        if(vkCreateShaderModule(VulkanContext::GetDevice(), &fragInfo, nullptr, &m_FragShader) != VK_SUCCESS)
         {
             s_Logger.Error("Failed to create shader");
         }
@@ -49,7 +49,12 @@ namespace Internal
         fragShaderStageInfo.module = m_FragShader;
         fragShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+        m_ShaderStages[2] = {vertShaderStageInfo, fragShaderStageInfo};
+    }
 
+    VulkanShader::~VulkanShader()
+    {
+        vkDestroyShaderModule(VulkanContext::GetDevice(), m_VertShader, nullptr);
+        vkDestroyShaderModule(VulkanContext::GetDevice(), m_FragShader, nullptr);
     }
 }
