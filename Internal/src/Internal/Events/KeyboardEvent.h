@@ -19,9 +19,9 @@ namespace Internal
     class KeyPressedEvent : public KeyboardEvent
     {
     public:
-        KeyPressedEvent(int keycode, bool repeat) : m_Keycode(keycode), m_Repeat(repeat) {};
-        virtual EventType GetType() override { return EventType::KEY_PRESSED_EVENT; };
-        static EventType GetTypeS() { return EventType::KEY_PRESSED_EVENT; };
+        KeyPressedEvent(int keycode, bool repeat) : m_Keycode(keycode), m_Repeat(repeat) {}
+        virtual EventType GetType() override { return EventType::KEY_PRESSED_EVENT; }
+        static EventType GetTypeS() { return EventType::KEY_PRESSED_EVENT; }
         int GetKey() { return m_Keycode; };
     private:
         int m_Keycode;

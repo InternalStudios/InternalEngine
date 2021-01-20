@@ -5,14 +5,14 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include "WindowsWindow.h"
 #include <windows.h>
 
 
 
 namespace Internal {
 
-    class WindowsVSurface {
+    class WindowsVSurface
+	{
     public:
         void Init(HWND hwnd, HINSTANCE hinstance, VkInstance& instance, VkSurfaceKHR* surface);
     };

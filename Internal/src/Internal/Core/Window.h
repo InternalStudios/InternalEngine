@@ -9,9 +9,7 @@
 #include <stdint.h>
 #include "Module.h"
 #include <vulkan/vulkan.h>
-
-#define CreateWindow CreateWindow
-
+#undef CreateWindow
 
 namespace Internal
 {
@@ -41,6 +39,7 @@ namespace Internal
 
         static bool ShouldClose() { return s_ShouldClose; }
 
+        virtual void OnEvent(Event& e) = 0;
         virtual void OnUpdate() = 0;
         virtual void OnTick() = 0;
         virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface) = 0;
