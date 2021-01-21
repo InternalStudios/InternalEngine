@@ -14,7 +14,6 @@
 #endif
 #include "Window.h"
 
-
 namespace Internal
 {
 	Window::Window(const WindowData& data)
@@ -23,7 +22,7 @@ namespace Internal
 		
 	}
 
-	Window* ::Internal::Window::CreateWindow(const WindowData& data)
+	Window* Window::CreateWindow(const WindowData& data)
 	{
 		#ifdef INTERNAL_WINDOWS
 		return new WindowsWindow(data);

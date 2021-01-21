@@ -110,9 +110,11 @@ namespace Internal
 		}
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
-	void WindowsWindow::OnEvent()
+
+	void WindowsWindow::OnEvent(Event& e)
 	{
 	}
+
 	void WindowsWindow::OnTick()
 	{
 	}

@@ -60,7 +60,7 @@ project "InternalEngine"
 
 	links
 	{
-	    "discord_game_sdk",
+	    "discord_game_sdk.dll",
 	    "ImGui"
 	}
 

@@ -26,7 +26,7 @@ namespace Internal
         virtual void OnUpdate() override;
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-        virtual void OnEvent() override;
+        virtual void OnEvent(Event& e) override;
         virtual void OnTick() override;
         virtual void CreateSurface(VkInstance& instance, VkSurfaceKHR* surface) override;
     private:
