@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Window.h"
-#include "discord.h"
 #include "Internal/Vulkan/VulkanContext.h"
 #include "Internal/Events/Event.h"
 #include "Internal/Events/KeyboardEvent.h"
@@ -43,7 +42,6 @@ namespace Internal
     private:
         static Application* s_Instance;
         Window* m_Window;
-        discord::Core* m_Discord {};
         VulkanContext m_VContext;
         Logger m_Logger;
         LayerStack m_LayerStack;

@@ -13,7 +13,6 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
-IncludeDir["discord"] = "Internal/libs/discord/cpp"
 IncludeDir["ImGui"] = "Internal/libs/imgui"
 
 include "Internal/libs/imgui"
@@ -53,14 +52,15 @@ project "InternalEngine"
 	includedirs
 	{
         "Internal/src",
-		"%{IncludeDir.discord}",
 		"%{IncludeDir.ImGui}"
+	}
 
+	libdirs
+	{
 	}
 
 	links
 	{
-	    "discord_game_sdk.dll",
 	    "ImGui"
 	}
 
@@ -91,12 +91,14 @@ project "InternalEngine"
 
 		libdirs
 		{
-			"Internal/libs/vulkan/Windows/Lib"
+			"Internal/libs/vulkan/Windows/Lib",
+			"C:/Program Files/Mono/lib"
 		}
 
 		links
 		{
-			"vulkan"
+			"vulkan-1",
+			"mono-2.0-sgen",
 		}
 
 	filter "system:macosx"
@@ -185,19 +187,16 @@ project "Sandbox"
 	includedirs
 	{
 		"Internal/src",
-		"%{IncludeDir.discord}",
 		"%{IncludeDir.ImGui}"
 	}
 
 	libdirs
     {
-     	"Internal/libs/discord/lib/x86_64"
     }
 
 	links
 	{
         "InternalEngine",
-		"discord_game_sdk.dll",
 		"ImGui"
 	}
 

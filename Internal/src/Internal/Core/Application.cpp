@@ -31,17 +31,6 @@ namespace Internal
         {
             m_VContext.Init();
         }
-        if(false)
-        {
-        auto result = discord::Core::Create(705604900792565821, DiscordCreateFlags_NoRequireDiscord, &m_Discord);
-        discord::Activity activity {};
-        activity.SetDetails("Testing");
-        activity.SetState("Testing");
-        activity.GetAssets().SetLargeImage("ielogo");
-        activity.GetTimestamps().SetStart(time(NULL));
-        m_Discord->ActivityManager().UpdateActivity(activity, [](discord::Result result){});
-        }
-
     }
 
     void Application::Run()
@@ -55,7 +44,6 @@ namespace Internal
                 layer->OnUpdate();
             }
             m_VContext.SwapBuffers();
-            //m_Discord->RunCallbacks();
         }
 
         if (GraphicsContext::s_GraphicsContext == GraphicsContexts::Vulkan)

@@ -82,7 +82,7 @@ namespace Internal
         m_TimePoint = now;
         std::cout << m_Time <<std::endl;
 
-        io.DeltaTime = 0.16;
+        io.DeltaTime = 0.16f;
 
         ImGui_ImplVulkan_NewFrame();
         ImGui::NewFrame();
